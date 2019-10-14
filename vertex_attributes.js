@@ -6,7 +6,6 @@ class VertexAttribute {
 
     this.buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-    console.log("floats:", floats);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(floats), usage);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
   }

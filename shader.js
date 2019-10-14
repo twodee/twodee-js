@@ -17,6 +17,15 @@ class ShaderProgram {
       throw message;
     }
 
+    // Query uniforms.
+    this.uniforms = {};
+    let nuniforms = gl.getProgramParameter(this.program, gl.ACTIVE_UNIFORMS);
+    for (let i = 0; i < nuniforms; ++i) {
+      let uniform = gl.getActiveUniform(this.program, i);
+      let location = gl.getUniformLocation(this.program, uniform.name);
+      this.uniforms[uniform.name] = location;
+    }
+
     this.unbind();
   }
 
@@ -47,5 +56,9 @@ class ShaderProgram {
   unbind() {
     gl.useProgram(null);
     this.isBound = false;
+  }
+
+  setUniformMatrix4(name, matrix) {
+    gl.uniformMatrix4fv(this.uniforms[name], false, matrix.toBuffer());
   }
 }
