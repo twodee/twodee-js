@@ -149,4 +149,32 @@ class Matrix4 {
     m.set(2, 3, z);
     return m;
   }
+
+  static rotate(axis, degrees) {
+    let radians = degrees * Math.PI / 180;
+    console.log("radians:", radians);
+    let sine = Math.sin(radians);
+    console.log("sine:", sine);
+    let cosine = Math.cos(radians);
+    console.log("cosine:", cosine);
+    let complement = 1 - cosine;
+    console.log("complement:", complement);
+    console.log("axis.x:", axis.x);
+    console.log("axis.y:", axis.y);
+    console.log("axis.z:", axis.z);
+
+    let m = new Matrix4();
+
+    m.set(0, 0, complement * axis.x * axis.x + cosine);
+    m.set(0, 1, complement * axis.x * axis.y - sine * axis.z);
+    m.set(0, 2, complement * axis.x * axis.z + sine * axis.y);
+    m.set(1, 0, complement * axis.y * axis.x + sine * axis.z);
+    m.set(1, 1, complement * axis.y * axis.y + cosine);
+    m.set(1, 2, complement * axis.y * axis.z - sine * axis.x);
+    m.set(2, 0, complement * axis.z * axis.x - sine * axis.y);
+    m.set(2, 1, complement * axis.z * axis.y + sine * axis.x);
+    m.set(2, 2, complement * axis.z * axis.z + cosine);
+
+    return m;
+  }
 }

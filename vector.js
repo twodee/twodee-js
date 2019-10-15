@@ -86,7 +86,7 @@ class Vector2 extends VectorN {
 
 // --------------------------------------------------------------------------- 
 
-class Vector3 {
+class Vector3 extends VectorN {
   constructor(x = 0, y = 0, z = 0) {
     super(3, [x, y, z]);
   }
@@ -138,7 +138,7 @@ class Vector3 {
 
 // --------------------------------------------------------------------------- 
 
-class Vector4 {
+class Vector4 extends VectorN {
   constructor(x = 0, y = 0, z = 0, w = 0) {
     super(4, [x, y, z, w]);
   }
@@ -193,5 +193,17 @@ class Vector4 {
 
   lerp(that, t) {
     return new Vector2((1 - t) * this.x + t * that.x, (1 - t) * this.y + t * that.y, (1 - t) * this.z + t * that.z, (1 - t) * this.z + t * that.z);
+  }
+
+  static right() {
+    return new Vector4(1, 0, 0, 0);
+  }
+
+  static up() {
+    return new Vector4(0, 1, 0, 0);
+  }
+
+  static forward() {
+    return new Vector4(0, 0, 1, 0);
   }
 }
