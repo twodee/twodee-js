@@ -35,7 +35,7 @@ class Matrix4 {
   }
 
   multiplyMatrix(that) {
-    let product = new Matrix4()
+    let product = new Matrix4();
     for (let r = 0; r < 4; ++r) {
       for (let c = 0; c < 4; ++c) {
         let dot = 0;
@@ -152,16 +152,9 @@ class Matrix4 {
 
   static rotate(axis, degrees) {
     let radians = degrees * Math.PI / 180;
-    console.log("radians:", radians);
     let sine = Math.sin(radians);
-    console.log("sine:", sine);
     let cosine = Math.cos(radians);
-    console.log("cosine:", cosine);
     let complement = 1 - cosine;
-    console.log("complement:", complement);
-    console.log("axis.x:", axis.x);
-    console.log("axis.y:", axis.y);
-    console.log("axis.z:", axis.z);
 
     let m = new Matrix4();
 
