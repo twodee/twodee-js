@@ -28,11 +28,13 @@ class VertexAttributes {
     this.attributes.push(attribute);
   }
 
-  // addIndices(ints, usage) {
-    // this.indexBuffer = gl.createBuffer();
-    // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-    // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-  // }
+  addIndices(ints, usage = gl.STATIC_DRAW) {
+    this.indexCount = ints.length;
+    this.indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(ints), usage);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+  }
 
   [Symbol.iterator]() {
     return this.attributes.values();

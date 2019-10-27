@@ -12,6 +12,7 @@ class VertexArray {
         gl.enableVertexAttribArray(location);
       }
     }
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, attributes.indexBuffer);
 
     // this.unbind();
   }
@@ -28,5 +29,9 @@ class VertexArray {
 
   drawSequence(mode) {
     gl.drawArrays(mode, 0, attributes.vertexCount);
+  }
+
+  drawIndexed(mode) {
+    gl.drawElements(mode, attributes.indexCount, gl.UNSIGNED_INT, 0);
   }
 }
