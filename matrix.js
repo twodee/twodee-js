@@ -126,6 +126,29 @@ class Matrix4 {
     return m;
   }
 
+  static fovPerspective(fovY, aspect, near, far) {
+    let y = near * Math.tan(fovY * Math.PI / 360);
+    let x = y * aspect;
+    return this.frustumPerspective(-x, x, -y, y, near, far);
+  }
+
+  static frustumPerspective(left, right, bottom, top, near, far) {
+    let m = new Matrix4();
+
+    m.set(0, 0, 2 * near / (right - left));
+    m.set(1, 1, 2 * near / (top - bottom));
+    m.set(2, 2, (near + far) / (near - far));
+
+    m.set(0, 2, (right + left) / (right - left));
+    m.set(1, 2, (top + bottom) / (top - bottom));
+    m.set(2, 3, 2 * far * near / (near - far));
+
+    m.set(3, 2, -1);
+    m.set(3, 3, 0);
+
+    return m;
+  }
+
   static inverseOrtho(left, right, bottom, top, near = -1, far = 1) {
     let m = Matrix4.scale((right - left) * 0.5, (top - bottom) * 0.5, (near - far) * 0.5);
     m.set(0, 3, (right + left) * 0.5);
