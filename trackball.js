@@ -57,8 +57,6 @@ class Trackball {
   }
 
   setViewport(width, height) {
-    console.log("width:", width);
-    console.log("height:", height);
     this.width = width;
     this.height = height;
   }

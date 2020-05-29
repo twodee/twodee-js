@@ -42,6 +42,10 @@ class VectorN {
   toString() {
     return `[${this.data.join(', ')}]`;
   }
+
+  clone() {
+    return new this.constructor(...this.data);
+  }
 }
 
 // --------------------------------------------------------------------------- 
