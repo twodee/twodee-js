@@ -8,6 +8,52 @@ class Trimesh {
     this.calculateBounds();
   }
 
+  smoothFaces() {
+    // Zero out per-vertex normals.
+    this.normals = new Array(this.vertexCount);
+    for (let i = 0; i < this.vertexCount; ++i) {
+      this.normals[i] = new Vector3(0, 0, 0);
+    }
+
+    // Compute face normal. Accumulate to each connected vertex.
+    for (let face of this.faces) {
+      const ab = this.positions[face[1]].subtract(this.positions[face[0]]);
+      const ac = this.positions[face[2]].subtract(this.positions[face[0]]);
+      const faceNormal = ab.cross(ac).normalize();
+      for (let i = 0; i < 3; ++i) {
+        this.normals[face[i]] = this.normals[face[i]].add(faceNormal);
+      }
+    }
+
+    // Normalize per-vertex normals.
+    for (let i = 0; i < this.vertexCount; ++i) {
+      if (this.normals[i].magnitude > 0) {
+        this.normals[i] = this.normals[i].normalize();
+      }
+    }
+  }
+
+  separateFaces() {
+    const oldPositions = this.positions;
+
+    this.positions = new Array(this.faceCount * 3);
+    this.normals = new Array(this.faceCount * 3);
+
+    // Compute face normal. Accumulate to each connected vertex.
+    let vertexIndex = 0;
+    for (let face of this.faces) {
+      const ab = oldPositions[face[1]].subtract(oldPositions[face[0]]);
+      const ac = oldPositions[face[2]].subtract(oldPositions[face[0]]);
+      const faceNormal = ab.cross(ac).normalize();
+      for (let i = 0; i < 3; ++i) {
+        this.positions[vertexIndex] = oldPositions[face[i]].clone();
+        this.normals[vertexIndex] = faceNormal;
+        face[i] = vertexIndex;
+        ++vertexIndex;
+      }
+    }
+  }
+
   calculateBounds() {
     if (this.vertexCount > 0) {
       this.minimumPosition = this.positions[0].clone();
