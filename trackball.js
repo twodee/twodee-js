@@ -1,4 +1,8 @@
-class Trackball {
+import {Matrix4} from './matrix.js';
+import {Vector2, Vector3} from './vector.js';
+import {MathUtilities} from './mathutilities.js';
+
+export class Trackball {
   constructor() {
     this.reset();
     this.mouseAt = [0, 0];

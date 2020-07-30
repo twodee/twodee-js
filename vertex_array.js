@@ -1,6 +1,8 @@
-class VertexArray {
+export class VertexArray {
   constructor(program, attributes) {
     this.vertexArray = gl.createVertexArray();
+    this.attributes = attributes;
+
     gl.bindVertexArray(this.vertexArray);
     for (let attribute of attributes) {
       let location = program.getAttributeLocation(attribute.name);
@@ -14,12 +16,16 @@ class VertexArray {
     }
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, attributes.indexBuffer);
 
-    // this.unbind();
+    this.unbind();
   }
 
   bind() {
     gl.bindVertexArray(this.vertexArray);
     this.isBound = true;
+  }
+
+  destroy() {
+    gl.deleteVertexArray(this.vertexArray);
   }
 
   unbind() {
@@ -28,10 +34,11 @@ class VertexArray {
   }
 
   drawSequence(mode) {
-    gl.drawArrays(mode, 0, attributes.vertexCount);
+    gl.drawArrays(mode, 0, this.attributes.vertexCount);
   }
 
   drawIndexed(mode) {
-    gl.drawElements(mode, attributes.indexCount, gl.UNSIGNED_INT, 0);
+    // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.attributes.indexBuffer);
+    gl.drawElements(mode, this.attributes.indexCount, gl.UNSIGNED_INT, 0);
   }
 }

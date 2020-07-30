@@ -1,4 +1,6 @@
-class Trimesh {
+import {Vector3} from './vector.js';
+
+export class Trimesh {
   constructor(positions, faces, normals, textureCoordinates) {
     this.positions = positions;
     this.faces = faces;

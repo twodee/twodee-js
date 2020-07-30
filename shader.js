@@ -1,4 +1,4 @@
-class ShaderProgram {
+export class ShaderProgram {
   constructor(vertexSource, fragmentSource) {
     // Compile.
     this.vertexShader = this.compileSource(gl.VERTEX_SHADER, vertexSource);
@@ -27,6 +27,12 @@ class ShaderProgram {
     }
 
     this.unbind();
+  }
+
+  destroy() {
+    gl.deleteShader(this.vertexShader);
+    gl.deleteShader(this.fragmentShader);
+    gl.deleteProgram(this.program);
   }
 
   compileSource(type, source) {
@@ -60,5 +66,9 @@ class ShaderProgram {
 
   setUniformMatrix4(name, matrix) {
     gl.uniformMatrix4fv(this.uniforms[name], false, matrix.toBuffer());
+  }
+
+  setUniform1f(name, value) {
+    gl.uniform1f(this.uniforms[name], value);
   }
 }

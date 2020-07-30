@@ -1,4 +1,7 @@
-class Prefab {
+import {Trimesh} from './trimesh.js';
+import {Vector3} from './vector.js';
+
+export class Prefab {
   static cube() {
     const positions = [
       new Vector3(0, 0, 1),
@@ -70,5 +73,77 @@ class Prefab {
     ];
 
     return new Trimesh(positions, faces, normals);
+  }
+
+  static sphere(radius, origin, sliceCount, stackCount) {
+    const stackDelta = Math.PI / (stackCount + 2);
+    const sliceDelta = 2.0 * Math.PI / sliceCount;
+
+    // Positions
+
+    const positions = [];
+
+    // Add latitude/longitude pairs.
+    let stackAt = stackDelta;
+    for (let r = 0; r <= stackCount; ++r, stackAt += stackDelta) {
+      let sliceAt = 0;
+      for (let c = 0; c < sliceCount; ++c, sliceAt += sliceDelta) {
+        positions.push(new Vector3(
+          radius * Math.cos(sliceAt) * Math.sin(stackAt),
+          radius *                     Math.cos(stackAt),
+          radius * Math.sin(sliceAt) * Math.sin(stackAt)
+        ).add(origin));
+      }
+    }
+
+    // Add top and bottom.
+    positions.push(new Vector3(0, radius, 0).add(origin));
+    positions.push(new Vector3(0, -radius, 0).add(origin));
+
+    // Faces
+    const faces = [];
+
+    // Connect up latitude/longitude grid.
+    for (let r = 0; r < stackCount; ++r) {
+      for (let c = 0; c < sliceCount; ++c) {
+        const nextStack = (r + 1) % (stackCount + 1);
+        const nextSlice = (c + 1) % (sliceCount + 0);
+
+        const faceA = [
+          r * sliceCount + c,
+          r * sliceCount + nextSlice,
+          nextStack * sliceCount + c,
+        ];
+
+        const faceB = [
+          faceA[2],
+          faceA[1],
+          nextStack * sliceCount + nextSlice,
+        ];
+
+        faces.push(faceA, faceB);
+      }
+    }
+
+    // Incorporate the bottom and top.
+    const topIndex = sliceCount * (stackCount + 1);
+    const bottomIndex = sliceCount * (stackCount + 1) + 1;
+    for (let c = 0; c < sliceCount; ++c) {
+      const faceA = [
+        (c + 1) % sliceCount,
+        c,
+        topIndex,
+      ];
+
+      const faceB = [
+        stackCount * sliceCount + c,
+        stackCount * sliceCount + (c + 1) % sliceCount,
+        bottomIndex,
+      ];
+
+      faces.push(faceA, faceB);
+    }
+
+    return new Trimesh(positions, faces);
   }
 }

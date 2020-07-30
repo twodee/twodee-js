@@ -1,4 +1,4 @@
-class VertexAttribute {
+export class VertexAttribute {
   constructor(name, nvertices, ncomponents, floats, usage = gl.STATIC_DRAW) {
     this.name = name;
     this.nvertices = nvertices;
@@ -9,9 +9,13 @@ class VertexAttribute {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(floats), usage);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
   }
+
+  destroy() {
+    gl.deleteBuffer(this.buffer);
+  }
 }
 
-class VertexAttributes {
+export class VertexAttributes {
   constructor() {
     this.nvertices = -1;
     this.indexBuffer = null;
@@ -34,6 +38,16 @@ class VertexAttributes {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(ints), usage);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+  }
+
+  destroy() {
+    for (let attribute of this.attributes) {
+      attribute.destroy();
+    }
+
+    if (this.indexBuffer) {
+      gl.deleteBuffer(this.indexBuffer);
+    }
   }
 
   [Symbol.iterator]() {

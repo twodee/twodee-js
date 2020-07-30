@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------- 
 
-class VectorN {
+export class VectorN {
   constructor(n, data) {
     this.n = n;
     this.data = data;
@@ -46,11 +46,53 @@ class VectorN {
   clone() {
     return new this.constructor(...this.data);
   }
+
+  perpendicular() {
+    /*
+    This function takes the given vector and finds an arbitrary vector
+    perpendicular to it. The premise is as follows:
+     
+    We need dot(vec, ans) == 0 for perpendicularity.  In other words:
+    vec[0] * ans[0] + vec[1] * ans[1] + vec[2] * ans[2] == 0
+    
+    We could say ans[1] and ans[2] are 1:
+    vec[0] * ans[0] + vec[1] + vec[2] == 0
+
+    This allows us to solve for ans[0], provided vec[0] != 0:
+    ans[0] == -(vec[1] + vec[2]) / vec[0]
+
+    If vec[0] is 0, then we could do similar things for the other two
+    dimensions.
+
+    If vec is the zero vector, nothing's perpendicular.
+    */
+
+    let i;
+    for (i = 0; i < this.n; ++i) {
+      if (this.data[i] !== 0) {
+        break;
+      }
+    }
+
+    if (i === this.n) {
+      throw MessagedException("No perpendicular vector.");
+    }
+
+    const perpendicular = new this.constructor(...this.data.map(x => 1));
+    let sum = 0;
+    for (let j = 0; j < this.n; ++j) {
+      if (j !== i) {
+        sum += this.data[j];
+      }
+    }
+    perpendicular.data[i] = -sum / this.data[i];
+    return perpendicular.normalize();
+  }
 }
 
 // --------------------------------------------------------------------------- 
 
-class Vector2 extends VectorN {
+export class Vector2 extends VectorN {
   constructor(x = 0, y = 0) {
     super(2, [x, y]);
   }
@@ -102,7 +144,7 @@ class Vector2 extends VectorN {
 
 // --------------------------------------------------------------------------- 
 
-class Vector3 extends VectorN {
+export class Vector3 extends VectorN {
   constructor(x = 0, y = 0, z = 0) {
     super(3, [x, y, z]);
   }
@@ -166,11 +208,15 @@ class Vector3 extends VectorN {
   dot(that) {
     return this.x * that.x + this.y * that.y + this.z * that.z;
   }
+
+  toVector4(w) {
+    return new Vector4(this.data[0], this.data[1], this.data[2], w);
+  }
 }
 
 // --------------------------------------------------------------------------- 
 
-class Vector4 extends VectorN {
+export class Vector4 extends VectorN {
   constructor(x = 0, y = 0, z = 0, w = 0) {
     super(4, [x, y, z, w]);
   }
@@ -235,6 +281,10 @@ class Vector4 extends VectorN {
     return this.x * that.x + this.y * that.y + this.z * that.z + this.w * that.w;
   }
 
+  toVector3() {
+    return new Vector3(this.data[0], this.data[1], this.data[2]);
+  }
+
   static right() {
     return new Vector4(1, 0, 0, 0);
   }
@@ -247,3 +297,6 @@ class Vector4 extends VectorN {
     return new Vector4(0, 0, 1, 0);
   }
 }
+
+// --------------------------------------------------------------------------- 
+

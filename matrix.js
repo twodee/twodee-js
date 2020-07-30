@@ -1,4 +1,6 @@
-class Matrix4 {
+import {Vector4} from './vector.js';
+
+export class Matrix4 {
   constructor() {
     this.buffer = new ArrayBuffer(16 * 4);
     this.floats = new Float32Array(this.buffer);
@@ -49,10 +51,10 @@ class Matrix4 {
   }
 
   multiplyVector(v) {
-    let product = [0, 0, 0, 0];
+    let product = new Vector4(0, 0, 0, 0);
     for (let r = 0; r < 4; ++r) {
       for (let c = 0; c < 4; ++c) {
-        product[r] += this.get(r, c) * v[c];
+        product.data[r] += this.get(r, c) * v.data[c];
       }
     }
     return product;
@@ -192,5 +194,9 @@ class Matrix4 {
     m.set(2, 2, complement * axis.z * axis.z + cosine);
 
     return m;
+  }
+
+  static rotateAround(axis, degrees, pivot) {
+    return Matrix4.translate(pivot.x, pivot.y, pivot.z).multiplyMatrix(Matrix4.rotate(axis, degrees)).multiplyMatrix(Matrix4.translate(-pivot.x, -pivot.y, -pivot.z));
   }
 }
