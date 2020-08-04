@@ -58,34 +58,38 @@ export class Trimesh {
 
   calculateBounds() {
     if (this.vertexCount > 0) {
-      this.minimumPosition = this.positions[0].clone();
-      this.maximumPosition = this.positions[0].clone();
+      this.bounds = {
+        minimum: this.positions[0].clone(),
+        maximum: this.positions[0].clone(),
+      };
     } else {
-      this.minimumPosition = new Vector3(0, 0, 0);
-      this.maximumPosition = new Vector3(0, 0, 0);
+      this.bounds = {
+        minimum: new Vector3(0, 0, 0),
+        maximum: new Vector3(0, 0, 0),
+      };
     }
 
     for (let position of this.positions) {
-      if (position.x < this.minimumPosition.x) {
-        this.minimumPosition.x = position.x;
-      } else if (position.x > this.maximumPosition.x) {
-        this.maximumPosition.x = position.x;
+      if (position.x < this.bounds.minimum.x) {
+        this.bounds.minimum.x = position.x;
+      } else if (position.x > this.bounds.maximum.x) {
+        this.bounds.maximum.x = position.x;
       }
 
-      if (position.y < this.minimumPosition.y) {
-        this.minimumPosition.y = position.y;
-      } else if (position.y > this.maximumPosition.y) {
-        this.maximumPosition.y = position.y;
+      if (position.y < this.bounds.minimum.y) {
+        this.bounds.minimum.y = position.y;
+      } else if (position.y > this.bounds.maximum.y) {
+        this.bounds.maximum.y = position.y;
       }
 
-      if (position.z < this.minimumPosition.z) {
-        this.minimumPosition.z = position.z;
-      } else if (position.z > this.maximumPosition.z) {
-        this.maximumPosition.z = position.z;
+      if (position.z < this.bounds.minimum.z) {
+        this.bounds.minimum.z = position.z;
+      } else if (position.z > this.bounds.maximum.z) {
+        this.bounds.maximum.z = position.z;
       }
     }
 
-    this.centroid = this.minimumPosition.add(this.maximumPosition).scalarMultiply(0.5);
+    this.centroid = this.bounds.minimum.add(this.bounds.maximum).scalarMultiply(0.5);
   }
 
   getFlatPositions() {

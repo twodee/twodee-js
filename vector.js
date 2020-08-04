@@ -88,6 +88,16 @@ export class VectorN {
     perpendicular.data[i] = -sum / this.data[i];
     return perpendicular.normalize();
   }
+
+  get maximumComponent() {
+    let max = this.data[0];
+    for (let i = 1; i < this.n; ++i) {
+      if (this.data[i] > max) {
+        max = this.data[i];
+      }
+    }
+    return max;
+  }
 }
 
 // --------------------------------------------------------------------------- 
@@ -139,6 +149,10 @@ export class Vector2 extends VectorN {
 
   lerp(that, t) {
     return new Vector2((1 - t) * this.x + t * that.x, (1 - t) * this.y + t * that.y);
+  }
+
+  toVector3(z = 0) {
+    return new Vector3(this.x, this.y, z);
   }
 }
 

@@ -2,33 +2,33 @@ import {Trimesh} from './trimesh.js';
 import {Vector3} from './vector.js';
 
 export class Prefab {
-  static cube() {
+  static cube(size = 1, origin = new Vector3(0, 0, 0)) {
     const positions = [
-      new Vector3(0, 0, 1),
-      new Vector3(1, 0, 1),
-      new Vector3(0, 1, 1),
-      new Vector3(1, 1, 1),
-      new Vector3(0, 0, 0),
-      new Vector3(1, 0, 0),
-      new Vector3(0, 1, 0),
-      new Vector3(1, 1, 0),
-      new Vector3(1, 0, 1),
-      new Vector3(1, 0, 0),
-      new Vector3(1, 1, 1),
-      new Vector3(1, 1, 0),
-      new Vector3(0, 0, 0),
-      new Vector3(0, 0, 1),
-      new Vector3(0, 1, 0),
-      new Vector3(0, 1, 1),
-      new Vector3(0, 1, 1),
-      new Vector3(1, 1, 1),
-      new Vector3(0, 1, 0),
-      new Vector3(1, 1, 0),
-      new Vector3(0, 0, 0),
-      new Vector3(1, 0, 0),
-      new Vector3(0, 0, 1),
-      new Vector3(1, 0, 1),
-    ];
+      new Vector3(-0.5, -0.5,  0.5),
+      new Vector3( 0.5, -0.5,  0.5),
+      new Vector3(-0.5,  0.5,  0.5),
+      new Vector3( 0.5,  0.5,  0.5),
+      new Vector3(-0.5, -0.5, -0.5),
+      new Vector3( 0.5, -0.5, -0.5),
+      new Vector3(-0.5,  0.5, -0.5),
+      new Vector3( 0.5,  0.5, -0.5),
+      new Vector3( 0.5, -0.5,  0.5),
+      new Vector3( 0.5, -0.5, -0.5),
+      new Vector3( 0.5,  0.5,  0.5),
+      new Vector3( 0.5,  0.5, -0.5),
+      new Vector3(-0.5, -0.5, -0.5),
+      new Vector3(-0.5, -0.5,  0.5),
+      new Vector3(-0.5,  0.5, -0.5),
+      new Vector3(-0.5,  0.5,  0.5),
+      new Vector3(-0.5,  0.5,  0.5),
+      new Vector3( 0.5,  0.5,  0.5),
+      new Vector3(-0.5,  0.5, -0.5),
+      new Vector3( 0.5,  0.5, -0.5),
+      new Vector3(-0.5, -0.5, -0.5),
+      new Vector3( 0.5, -0.5, -0.5),
+      new Vector3(-0.5, -0.5,  0.5),
+      new Vector3( 0.5, -0.5,  0.5),
+    ].map(p => p.scalarMultiply(size).add(origin));
 
     const normals = [
       new Vector3(0, 0, 1),
@@ -145,5 +145,28 @@ export class Prefab {
     }
 
     return new Trimesh(positions, faces);
+  }
+
+  static quadrilateral(size = 1, origin = new Vector3(0, 0, 0)) {
+    const positions = [
+      new Vector3(-0.5, -0.5, 0),
+      new Vector3( 0.5, -0.5, 0),
+      new Vector3(-0.5,  0.5, 0),
+      new Vector3( 0.5,  0.5, 0),
+    ].map(p => p.scalarMultiply(size).add(origin));
+
+    const normals = [
+      new Vector3(0, 0, 1),
+      new Vector3(0, 0, 1),
+      new Vector3(0, 0, 1),
+      new Vector3(0, 0, 1),
+    ];
+
+    const faces = [
+      [0, 1, 3],
+      [0, 3, 2],
+    ];
+
+    return new Trimesh(positions, faces, normals);
   }
 }

@@ -129,7 +129,7 @@ export class Matrix4 {
   }
 
   static fovPerspective(fovY, aspect, near, far) {
-    let y = near * Math.tan(fovY * Math.PI / 360);
+    let y = near * Math.tan(fovY * 0.5 * Math.PI / 180);
     let x = y * aspect;
     return this.frustumPerspective(-x, x, -y, y, near, far);
   }
@@ -198,5 +198,9 @@ export class Matrix4 {
 
   static rotateAround(axis, degrees, pivot) {
     return Matrix4.translate(pivot.x, pivot.y, pivot.z).multiplyMatrix(Matrix4.rotate(axis, degrees)).multiplyMatrix(Matrix4.translate(-pivot.x, -pivot.y, -pivot.z));
+  }
+
+  static identity() {
+    return new Matrix4();
   }
 }
