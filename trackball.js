@@ -49,13 +49,13 @@ export class Trackball {
   }
 
   vectorToMouse(span, x, y) {
-    let vector = new Vector3((this.width * 0.5 - x) / span, (this.height * 0.5 - y) / span, 0);
+    let vector = new Vector3((x - this.width * 0.5) / span, -(y - this.height * 0.5) / span, 0);
     vector.z = 1.0 - vector.x * vector.x - vector.y * vector.y;
     if (vector.z < 0) {
       vector.z = 0;
       vector = vector.normalize();
     } else {
-      vector.z = Math.sqrt(vector.z);
+      vector.z = -Math.sqrt(vector.z);
     }
     return vector;
   }

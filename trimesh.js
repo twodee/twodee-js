@@ -7,7 +7,47 @@ export class Trimesh {
     this.normals = normals;
     this.textureCoordinates = textureCoordinates;
 
+    this.bounds = undefined;
+    this.centroid = undefined;
+
     this.calculateBounds();
+  }
+
+  toPod() {
+    return {
+      type: 'Trimesh',
+      positions: this.positions.map(position => position.toArray()),
+      faces: this.faces,
+      normals: this.normals?.map(normal => normal.toArray()),
+      textureCoordinates: this.textureCoordinates?.map(coordinate => coordinate.toArray()),
+      bounds: this.bounds ? {
+        minimum: this.bounds.minimum.toArray(),
+        maximum: this.bounds.maximum.toArray(),
+      } : null,
+      centroid: this.centroid?.toArray(),
+    };
+  }
+
+  static fromPod(pod) {
+    const mesh = new Trimesh(
+      pod.positions.map(position => new Vector3(...position)), 
+      pod.faces.map(face => [...face]), 
+      pod.normals?.map(normal => new Vector3(...normal)), 
+      pod.textureCoordinates?.map(coordinate => new Vector2(...coordinate)), 
+    );
+
+    if (pod.bounds) {
+      mesh.bounds = {
+        minimum: new Vector3(...pod.bounds.minimum),
+        maximum: new Vector3(...pod.bounds.maximum),
+      };
+    }
+
+    if (pod.centroid) {
+      mesh.centroid = new Vector3(...pod.centroid);
+    }
+
+    return mesh;
   }
 
   smoothFaces() {

@@ -98,6 +98,10 @@ export class VectorN {
     }
     return max;
   }
+
+  toArray() {
+    return this.data.slice(0);
+  }
 }
 
 // --------------------------------------------------------------------------- 
