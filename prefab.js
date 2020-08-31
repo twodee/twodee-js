@@ -106,19 +106,19 @@ export class Prefab {
     // Connect up latitude/longitude grid.
     for (let r = 0; r < stackCount; ++r) {
       for (let c = 0; c < sliceCount; ++c) {
-        const nextStack = (r + 1) % (stackCount + 1);
-        const nextSlice = (c + 1) % (sliceCount + 0);
+        const nextR = (r + 1) % (stackCount + 1);
+        const nextC = (c + 1) % (sliceCount + 0);
 
         const faceA = [
           r * sliceCount + c,
-          r * sliceCount + nextSlice,
-          nextStack * sliceCount + c,
+          r * sliceCount + nextC,
+          nextR * sliceCount + c,
         ];
 
         const faceB = [
           faceA[2],
           faceA[1],
-          nextStack * sliceCount + nextSlice,
+          nextR * sliceCount + nextC,
         ];
 
         faces.push(faceA, faceB);

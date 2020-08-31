@@ -64,4 +64,17 @@ export class Camera {
   relocate(newFrom) {
     this.lookAt(newFrom, newFrom.add(this.to.subtract(this.from)), this.up);
   }
+
+  toPod() {
+    return {
+      type: 'Camera',
+      from: this.from.toArray(),
+      to: this.to.toArray(),
+      up: this.up.toArray(),
+    };
+  }
+
+  static fromPod(pod) {
+    return new Camera(new Vector3(...pod.from), new Vector3(...pod.to), new Vector3(...pod.up));
+  }
 }
