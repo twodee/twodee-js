@@ -10,4 +10,8 @@ export class MathUtilities {
   static toRadians(degrees) {
     return degrees * Math.PI / 180;
   }
+
+  static isClose(a, b, epsilon) {
+    return Math.abs(a - b) <= epsilon;
+  }
 }

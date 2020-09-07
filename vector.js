@@ -23,10 +23,14 @@ export class VectorN {
   }
 
   flipAround(that) {
-    return this.subtract(that).negate().add(that);
+    return this.subtract(that).inverse().add(that);
   }
 
   negate() {
+    return this.scalarMultiply(-1);
+  }
+
+  inverse() {
     return this.scalarMultiply(-1);
   }
 
