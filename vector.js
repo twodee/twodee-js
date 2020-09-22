@@ -7,7 +7,7 @@ export class VectorN {
   }
 
   get(i) {
-    if (i < n) {
+    if (i >= 0 && i < this.n) {
       return this.data[i];
     } else {
       return 0;
@@ -101,6 +101,10 @@ export class VectorN {
       }
     }
     return max;
+  }
+
+  abs() {
+    return new this.constructor(this.data.map(value => Math.abs(value)));
   }
 
   toArray() {
