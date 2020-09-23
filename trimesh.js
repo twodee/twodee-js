@@ -134,6 +134,14 @@ export class Trimesh {
     this.centroid = this.bounds.minimum.add(this.bounds.maximum).scalarMultiply(0.5);
   }
 
+  reverseWinding() {
+    for (let face of this.faces) {
+      const tmp = face[1];
+      face[1] = face[2];
+      face[2] = tmp;
+    }
+  }
+
   getFlatPositions() {
     const flat = [];
     for (let position of this.positions) {
@@ -168,8 +176,9 @@ export class Trimesh {
     return this.faces.length;
   }
 
-  static triangulate(positions) {
-    // Assumes polyline traces planar polygon.
+  static triangulate(positions, fixWinding = false) {
+    // Assumes polyline traces planar polygon. Assumes last position is not
+    // coincident with the first.
 
     // Triangulating is easier in 2D.
     const flattenedPositions = Polyline.flatten(positions);
@@ -184,11 +193,12 @@ export class Trimesh {
     // A negative signed area means the vertices are enumerated in clockwise
     // order in the Cartesian coordinate system with the origin at (0, 0) and
     // they y-axis pointing up.
-    // bool is_reversed = false;
-    // if (!flattened->IsCounterclockwise()) {
-      // std::reverse(remaining.begin(), remaining.end());
-      // is_reversed = true;
-    // }
+    let isReversed = false;
+    if (!Polyline.isCounterclockwise(flattenedPositions)) {
+      remaining.reverse();
+      isReversed = true;
+    }
+    console.log("isReversed:", isReversed);
 
     // While we have at least three vertices left, find an ear and make a face of it.
     while (remaining.length > 2) {
@@ -238,6 +248,11 @@ export class Trimesh {
       }
     }
 
-    return new Trimesh(positions, faces);
+    const mesh = new Trimesh(positions, faces);
+    if (!fixWinding && isReversed) {
+      mesh.reverseWinding();
+    }
+
+    return mesh;
   }
 }
