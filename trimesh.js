@@ -194,11 +194,10 @@ export class Trimesh {
     // order in the Cartesian coordinate system with the origin at (0, 0) and
     // they y-axis pointing up.
     let isReversed = false;
-    if (!Polyline.isCounterclockwise(flattenedPositions)) {
+    if (!Polyline.isCounterClockwise(flattenedPositions)) {
       remaining.reverse();
       isReversed = true;
     }
-    console.log("isReversed:", isReversed);
 
     // While we have at least three vertices left, find an ear and make a face of it.
     while (remaining.length > 2) {

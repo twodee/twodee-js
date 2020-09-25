@@ -1,4 +1,4 @@
-import {Vector2} from './vector.js';
+import {Vector2, Vector3} from './vector.js';
 
 export class Polyline {
   static flatten(positions) {
@@ -26,7 +26,7 @@ export class Polyline {
     return flattenedPositions;
   }
 
-  static isCounterclockwise(positions) {
+  static isCounterClockwise(positions) {
     let signedArea = 0;
     for (let i = 0; i < positions.length; ++i) {
       const a = positions[i];
@@ -34,5 +34,17 @@ export class Polyline {
       signedArea += (b.x - a.x) * (b.y + a.y);
     }
     return signedArea < 0;
+  }
+
+  static normal(positions) {
+    let normal = new Vector3(0, 0, 0);
+
+    for (let i = 0; i < positions.length; ++i) {
+      const a = positions[i];
+      const b = positions[(i + 1) % positions.length];
+      normal = normal.add(a.cross(b));
+    }
+
+    return normal.normalize();
   }
 }
