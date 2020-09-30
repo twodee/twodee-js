@@ -9,7 +9,7 @@ export class Plane {
   intersectRay(from, direction) {
     const dot = this.normal.dot(direction);
 
-    if (Math.abs(dot) < 0.000001) {
+    if (Math.abs(dot) < 1e-6) {
       return null;
     } else {
       const diff = this.point.subtract(from);
