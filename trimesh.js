@@ -254,4 +254,25 @@ export class Trimesh {
 
     return mesh;
   }
+
+  static mergeToObj(meshes) {
+    let obj = '# Exported from twodee.js\n';
+
+    let base = 1;
+    for (let {name, mesh} of meshes) {
+      obj += `o ${name}\n`;
+
+      for (let position of mesh.positions) {
+        obj += `v ${position.x} ${position.y} ${position.z}\n`;
+      }
+
+      for (let face of mesh.faces) {
+        obj += `f ${face[0] + base} ${face[1] + base} ${face[2] + base}\n`;
+      }
+
+      base += mesh.positions.length;
+    }
+
+    return obj;
+  }
 }
