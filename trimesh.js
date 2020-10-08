@@ -9,16 +9,29 @@ export class Trimesh {
     this.normals = normals;
     this.textureCoordinates = textureCoordinates;
 
+    this.colors = undefined;
     this.bounds = undefined;
     this.centroid = undefined;
 
     this.calculateBounds();
   }
 
+  setColors(colors) {
+    if (colors.length !== this.vertexCount) {
+      throw new Error('number of colors doesn\'t match number of vertices');
+    }
+    this.colors = colors;
+  }
+
+  color(rgb) {
+    this.colors = new Array(this.vertexCount).fill(rgb);
+  }
+
   toPod() {
     return {
       type: 'Trimesh',
       positions: this.positions.map(position => position.toArray()),
+      colors: this.colors?.map(color => color.toArray()),
       faces: this.faces,
       normals: this.normals?.map(normal => normal.toArray()),
       textureCoordinates: this.textureCoordinates?.map(coordinate => coordinate.toArray()),
@@ -37,6 +50,10 @@ export class Trimesh {
       pod.normals?.map(normal => new Vector3(...normal)), 
       pod.textureCoordinates?.map(coordinate => new Vector2(...coordinate)), 
     );
+
+    if (pod.colors) {
+      mesh.colors = pod.colors.map(color => new Vector3(...color)); 
+    }
 
     if (pod.bounds) {
       mesh.bounds = {
@@ -83,6 +100,11 @@ export class Trimesh {
     this.positions = new Array(this.faceCount * 3);
     this.normals = new Array(this.faceCount * 3);
 
+    const oldColors = this.colors;
+    if (oldColors) {
+      this.colors = new Array(this.faceCount * 3);
+    }
+
     // Compute face normal. Accumulate to each connected vertex.
     let vertexIndex = 0;
     for (let face of this.faces) {
@@ -92,6 +114,11 @@ export class Trimesh {
       for (let i = 0; i < 3; ++i) {
         this.positions[vertexIndex] = oldPositions[face[i]].clone();
         this.normals[vertexIndex] = faceNormal;
+
+        if (oldColors) {
+          this.colors[vertexIndex] = oldColors[face[i]].clone();
+        }
+
         face[i] = vertexIndex;
         ++vertexIndex;
       }
@@ -149,6 +176,14 @@ export class Trimesh {
       flat.push(position.y);
       flat.push(position.z);
       flat.push(1);
+    }
+    return flat;
+  }
+
+  getFlatColors() {
+    const flat = [];
+    for (let color of this.colors) {
+      flat.push(color.x, color.y, color.z, 1);
     }
     return flat;
   }
