@@ -196,6 +196,10 @@ export class Matrix4 {
     return m;
   }
 
+  static scaleAround(factors, pivot) {
+    return Matrix4.translate(pivot.x, pivot.y, pivot.z).multiplyMatrix(Matrix4.scale(factors.x, factors.y, factors.z)).multiplyMatrix(Matrix4.translate(-pivot.x, -pivot.y, -pivot.z));
+  }
+
   static rotateAround(axis, degrees, pivot) {
     return Matrix4.translate(pivot.x, pivot.y, pivot.z).multiplyMatrix(Matrix4.rotate(axis, degrees)).multiplyMatrix(Matrix4.translate(-pivot.x, -pivot.y, -pivot.z));
   }

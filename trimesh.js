@@ -69,6 +69,12 @@ export class Trimesh {
     return mesh;
   }
 
+  transform(matrix) {
+    for (let i = 0; i < this.positions.length; ++i) {
+      this.positions[i] = matrix.multiplyVector(this.positions[i].toVector4(1)).toVector3();
+    }
+  }
+
   smoothFaces() {
     // Zero out per-vertex normals.
     this.normals = new Array(this.vertexCount);
