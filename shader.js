@@ -1,8 +1,8 @@
 export class ShaderProgram {
-  constructor(vertexSource, fragmentSource) {
+  constructor(vertexSource, fragmentSource, version = 300, precision = 'mediump') {
     // Compile.
-    this.vertexShader = this.compileSource(gl.VERTEX_SHADER, vertexSource);
-    this.fragmentShader = this.compileSource(gl.FRAGMENT_SHADER, fragmentSource);
+    this.vertexShader = this.compileSource(gl.VERTEX_SHADER, `#version ${version} es\n${vertexSource}`);
+    this.fragmentShader = this.compileSource(gl.FRAGMENT_SHADER, `#version ${version} es\nprecision ${precision} float;\n${fragmentSource}`);
 
     // Link.
     this.program = gl.createProgram();
