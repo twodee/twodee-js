@@ -75,4 +75,8 @@ export class ShaderProgram {
   setUniform2f(name, a, b) {
     gl.uniform2f(this.uniforms[name], a, b);
   }
+
+  setUniform3f(name, a, b, c) {
+    gl.uniform3f(this.uniforms[name], a, b, c);
+  }
 }

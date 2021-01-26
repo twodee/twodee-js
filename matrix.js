@@ -2,8 +2,7 @@ import {Vector4} from './vector.js';
 
 export class Matrix4 {
   constructor() {
-    this.buffer = new ArrayBuffer(16 * 4);
-    this.floats = new Float32Array(this.buffer);
+    this.floats = new Float32Array(16);
     this.set(0, 0, 1);
     this.set(1, 1, 1);
     this.set(2, 2, 1);
