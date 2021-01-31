@@ -174,6 +174,23 @@ export class Matrix4 {
     return m;
   }
 
+  static rotateZ(degrees) {
+    let radians = degrees * Math.PI / 180;
+    let s = Math.sin(radians);
+    let c = Math.cos(radians);
+
+    let m = new Matrix4();
+    m.set(0, 0, c);
+    m.set(0, 1, -s);
+
+    m.set(1, 0, s);
+    m.set(1, 1, c);
+
+    m.set(2, 3, 1);
+    
+    return m;
+  }
+
   static rotate(axis, degrees) {
     let radians = degrees * Math.PI / 180;
     let sine = Math.sin(radians);
