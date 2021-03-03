@@ -1,4 +1,4 @@
-import {Vector4} from './vector.js';
+import {Vector3, Vector4} from './vector.js';
 
 export class Matrix4 {
   constructor() {
