@@ -1,8 +1,18 @@
-const fs = require('fs');
+import {Vector3} from './vector';
+import {Trimesh} from './trimesh';
 
-class TrimeshIO {
-  static readObj(path) {
-    const text = fs.readFileSync(path, {encoding: 'utf8'});  
+export class TrimeshIO {
+  static readObjFromFile(path) {
+    const text = require('fs').readFileSync(path, {encoding: 'utf8'});
+    return TrimeshIO.readObjFromString(text);
+  }
+
+  static async readObjFromUrl(url) {
+    const text = await fetch(url).then(response => response.text());
+    return TrimeshIO.readObjFromString(text);
+  }
+
+  static readObjFromString(text) {
     const lines = text.split(/\r?\n/); 
     
     const freePositions = [];

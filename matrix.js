@@ -23,7 +23,7 @@ export class Matrix4 {
     for (let r = 0; r < 4; ++r) {
       for (let c = 0; c < 4; ++c) {
         let value = this.get(r, c);
-        value = Math.round(value * 1000) / 1000
+        value = Math.round(value * 1000) / 1000;
         s += value + ' ';
       }
       s += '\n';
@@ -105,17 +105,6 @@ export class Matrix4 {
     return m;
   }
 
-  toString() {
-    let s = '';
-    for (let r = 0; r < 4; ++r) {
-      for (let c = 0; c < 4; ++c) {
-        s += this.get(r, c) + ', ';
-      }
-      s += '\n';
-    }
-    return s;
-  }
-
   static ortho(left, right, bottom, top, near = -1, far = 1) {
     let m = new Matrix4();
     m.set(0, 0, 2 / (right - left));
@@ -186,7 +175,41 @@ export class Matrix4 {
     m.set(1, 0, s);
     m.set(1, 1, c);
 
-    m.set(2, 3, 1);
+    m.set(2, 2, 1);
+    
+    return m;
+  }
+
+  static rotateX(degrees) {
+    let radians = degrees * Math.PI / 180;
+    let s = Math.sin(radians);
+    let c = Math.cos(radians);
+
+    let m = new Matrix4();
+    m.set(1, 1, c);
+    m.set(1, 2, -s);
+
+    m.set(2, 1, s);
+    m.set(2, 2, c);
+
+    m.set(0, 0, 1);
+    
+    return m;
+  }
+
+  static rotateY(degrees) {
+    let radians = degrees * Math.PI / 180;
+    let s = Math.sin(radians);
+    let c = Math.cos(radians);
+
+    let m = new Matrix4();
+    m.set(0, 0, c);
+    m.set(0, 2, -s);
+
+    m.set(2, 0, s);
+    m.set(2, 2, c);
+
+    m.set(1, 1, 1);
     
     return m;
   }
@@ -202,9 +225,11 @@ export class Matrix4 {
     m.set(0, 0, complement * axis.x * axis.x + cosine);
     m.set(0, 1, complement * axis.x * axis.y - sine * axis.z);
     m.set(0, 2, complement * axis.x * axis.z + sine * axis.y);
+
     m.set(1, 0, complement * axis.y * axis.x + sine * axis.z);
     m.set(1, 1, complement * axis.y * axis.y + cosine);
     m.set(1, 2, complement * axis.y * axis.z - sine * axis.x);
+
     m.set(2, 0, complement * axis.z * axis.x - sine * axis.y);
     m.set(2, 1, complement * axis.z * axis.y + sine * axis.x);
     m.set(2, 2, complement * axis.z * axis.z + cosine);

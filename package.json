@@ -1,0 +1,20 @@
+{
+  "name": "twodeejs",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "camera.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twodee/twodeejs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/twodee/twodeejs/issues"
+  },
+  "homepage": "https://github.com/twodee/twodeejs#readme"
+}

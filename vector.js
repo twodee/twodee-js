@@ -38,6 +38,10 @@ export class VectorN {
     return this.subtract(that).magnitude;
   }
 
+  divide(that) {
+    return new this.constructor(...this.data.map((value, i) => value / that.get(i)));
+  }
+
   diagonalDistance(that) {
     let diff = that.subtract(this);
     return diff.reduce((a, b) => Math.max(a, b));
@@ -104,7 +108,16 @@ export class VectorN {
   }
 
   abs() {
-    return new this.constructor(this.data.map(value => Math.abs(value)));
+    return new this.constructor(...this.data.map(value => Math.abs(value)));
+  }
+
+  dot(that) {
+    return this.data.reduce((accumulator, value, i) => value * that.get(i) + accumulator, 0);
+  }
+
+  reflect(axis) {
+    // Assume axis is normalized.
+    return axis.scalarMultiply(2 * this.dot(axis)).subtract(this);
   }
 
   toArray() {
@@ -155,9 +168,9 @@ export class Vector2 extends VectorN {
     return new Vector2(Math.round(this.x), Math.round(this.y));
   }
 
-  dot(that) {
-    return this.x * that.x + this.y * that.y;
-  }
+  // dot(that) {
+    // return this.x * that.x + this.y * that.y;
+  // }
 
   lerp(that, t) {
     return new Vector2((1 - t) * this.x + t * that.x, (1 - t) * this.y + t * that.y);
@@ -237,6 +250,18 @@ export class Vector3 extends VectorN {
 
   toVector4(w) {
     return new Vector4(this.data[0], this.data[1], this.data[2], w);
+  }
+
+  static right() {
+    return new Vector3(1, 0, 0);
+  }
+
+  static up() {
+    return new Vector3(0, 1, 0);
+  }
+
+  static forward() {
+    return new Vector3(0, 0, 1);
   }
 }
 
@@ -325,4 +350,3 @@ export class Vector4 extends VectorN {
 }
 
 // --------------------------------------------------------------------------- 
-

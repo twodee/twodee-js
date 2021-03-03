@@ -10,6 +10,12 @@ export class VertexAttribute {
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
   }
 
+  update(floats) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(floats));
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  }
+
   destroy() {
     gl.deleteBuffer(this.buffer);
   }
@@ -30,6 +36,8 @@ export class VertexAttributes {
     this.nvertices = nvertices;
     let attribute = new VertexAttribute(name, nvertices, ncomponents, floats, usage);
     this.attributes.push(attribute);
+
+    return attribute;
   }
 
   addIndices(ints, usage = gl.STATIC_DRAW) {
@@ -57,4 +65,6 @@ export class VertexAttributes {
   get vertexCount() {
     return this.nvertices;
   }
+
+
 }

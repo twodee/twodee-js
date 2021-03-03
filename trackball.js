@@ -1,6 +1,6 @@
 import {Matrix4} from './matrix.js';
 import {Vector2, Vector3} from './vector.js';
-import {MathUtilities} from './mathutilities.js';
+import {MathUtilities} from './math-utilities.js';
 
 export class Trackball {
   constructor() {

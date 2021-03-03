@@ -64,6 +64,10 @@ export class ShaderProgram {
     this.isBound = false;
   }
 
+  setUniform1i(name, value) {
+    gl.uniform1i(this.uniforms[name], value);
+  }
+
   setUniformMatrix4(name, matrix) {
     gl.uniformMatrix4fv(this.uniforms[name], false, matrix.toBuffer());
   }
