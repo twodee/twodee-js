@@ -179,6 +179,10 @@ export class Vector2 extends VectorN {
   toVector3(z = 0) {
     return new Vector3(this.x, this.y, z);
   }
+
+  toVector4(z, w) {
+    return new Vector4(this.x, this.y, z, w);
+  }
 }
 
 // --------------------------------------------------------------------------- 

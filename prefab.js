@@ -4,26 +4,38 @@ import {Vector3} from './vector.js';
 export class Prefab {
   static cube(size = 1, origin = new Vector3(0, 0, 0)) {
     const positions = [
+
+      // Front
       new Vector3(-0.5, -0.5,  0.5),
       new Vector3( 0.5, -0.5,  0.5),
       new Vector3(-0.5,  0.5,  0.5),
       new Vector3( 0.5,  0.5,  0.5),
-      new Vector3(-0.5, -0.5, -0.5),
+
+      // Back
       new Vector3( 0.5, -0.5, -0.5),
-      new Vector3(-0.5,  0.5, -0.5),
+      new Vector3(-0.5, -0.5, -0.5),
       new Vector3( 0.5,  0.5, -0.5),
+      new Vector3(-0.5,  0.5, -0.5),
+
+      // Right
       new Vector3( 0.5, -0.5,  0.5),
       new Vector3( 0.5, -0.5, -0.5),
       new Vector3( 0.5,  0.5,  0.5),
       new Vector3( 0.5,  0.5, -0.5),
+
+      // Left
       new Vector3(-0.5, -0.5, -0.5),
       new Vector3(-0.5, -0.5,  0.5),
       new Vector3(-0.5,  0.5, -0.5),
       new Vector3(-0.5,  0.5,  0.5),
+
+      // Top
       new Vector3(-0.5,  0.5,  0.5),
       new Vector3( 0.5,  0.5,  0.5),
       new Vector3(-0.5,  0.5, -0.5),
       new Vector3( 0.5,  0.5, -0.5),
+
+      // Bottom
       new Vector3(-0.5, -0.5, -0.5),
       new Vector3( 0.5, -0.5, -0.5),
       new Vector3(-0.5, -0.5,  0.5),

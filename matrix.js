@@ -105,7 +105,24 @@ export class Matrix4 {
     return m;
   }
 
+  transpose() {
+    const that = new Matrix4();
+
+    for (let r = 0; r < 4; r += 1) {
+      for (let c = 0; c < 4; c += 1) {
+        that.set(r, c, this.get(c, r));
+      }
+    }
+
+    return that;
+  }
+
   static ortho(left, right, bottom, top, near = -1, far = 1) {
+    // scale(2 / (b - a)) * translate(-centroid)
+    // a 0 0 d0
+    // 0 b 0 d1
+    // 0 0 c d2
+    // 0 0 0 1
     let m = new Matrix4();
     m.set(0, 0, 2 / (right - left));
     m.set(1, 1, 2 / (top - bottom));
@@ -113,6 +130,15 @@ export class Matrix4 {
     m.set(0, 3, -(right + left) / (right - left));
     m.set(1, 3, -(top + bottom) / (top - bottom));
     m.set(2, 3, (near + far) / (near - far));
+    return m;
+  }
+
+  static inverseOrtho(left, right, bottom, top, near = -1, far = 1) {
+    // translate and scale
+    let m = Matrix4.scale((right - left) * 0.5, (top - bottom) * 0.5, (near - far) * 0.5);
+    m.set(0, 3, (right + left) * 0.5);
+    m.set(1, 3, (top + bottom) * 0.5);
+    m.set(2, 3, (far + near) * 0.5);
     return m;
   }
 
@@ -136,14 +162,6 @@ export class Matrix4 {
     m.set(3, 2, -1);
     m.set(3, 3, 0);
 
-    return m;
-  }
-
-  static inverseOrtho(left, right, bottom, top, near = -1, far = 1) {
-    let m = Matrix4.scale((right - left) * 0.5, (top - bottom) * 0.5, (near - far) * 0.5);
-    m.set(0, 3, (right + left) * 0.5);
-    m.set(1, 3, (top + bottom) * 0.5);
-    m.set(2, 3, (far + near) * 0.5);
     return m;
   }
 

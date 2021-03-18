@@ -14,4 +14,12 @@ export class MathUtilities {
   static isClose(a, b, epsilon) {
     return Math.abs(a - b) <= epsilon;
   }
+
+  static powerOfTwoCeiling(x) {
+    return Math.pow(2, Math.ceil(Math.log2(x)));
+  }
+
+  static isPowerOfTwo(x) {
+    return x & (x - 1) === 0;
+  }
 }
