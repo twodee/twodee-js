@@ -64,23 +64,34 @@ export class ShaderProgram {
     this.isBound = false;
   }
 
+  assertUniform(name) {
+    if (!this.uniforms.hasOwnProperty(name)) {
+      console.error(`${name} isn't a valid uniform.`);
+    }
+  }
+
   setUniform1i(name, value) {
+    this.assertUniform(name);
     gl.uniform1i(this.uniforms[name], value);
   }
 
   setUniformMatrix4(name, matrix) {
+    this.assertUniform(name);
     gl.uniformMatrix4fv(this.uniforms[name], false, matrix.toBuffer());
   }
 
   setUniform1f(name, value) {
+    this.assertUniform(name);
     gl.uniform1f(this.uniforms[name], value);
   }
 
   setUniform2f(name, a, b) {
+    this.assertUniform(name);
     gl.uniform2f(this.uniforms[name], a, b);
   }
 
   setUniform3f(name, a, b, c) {
+    this.assertUniform(name);
     gl.uniform3f(this.uniforms[name], a, b, c);
   }
 }

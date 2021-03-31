@@ -3,11 +3,11 @@ import {Polyline} from './polyline.js';
 import {Triangle} from './triangle.js';
 
 export class Trimesh {
-  constructor(positions, faces, normals, textureCoordinates) {
+  constructor(positions, faces, normals, extraVertexAttributes) {
     this.positions = positions;
     this.faces = faces;
     this.normals = normals;
-    this.textureCoordinates = textureCoordinates;
+    this.extraVertexAttributes = extraVertexAttributes;
 
     this.colors = undefined;
     this.bounds = undefined;
@@ -201,6 +201,14 @@ export class Trimesh {
       flat.push(normal.y);
       flat.push(normal.z);
       flat.push(0);
+    }
+    return flat;
+  }
+
+  getFlatAttribute(attribute) {
+    const flat = [];
+    for (let value of this.extraVertexAttributes[attribute]) {
+      flat.push(...value.data);
     }
     return flat;
   }

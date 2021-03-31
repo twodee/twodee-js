@@ -14,6 +14,14 @@ export class VectorN {
     }
   }
 
+  get product() {
+    return this.data.reduce((accumulator, datum) => accumulator * datum, 1);
+  }
+
+  get sum() {
+    return this.data.reduce((accumulator, datum) => accumulator + datum, 0);
+  }
+
   get magnitude() {
     return Math.sqrt(this.data.reduce((accumulator, datum) => accumulator + datum * datum, 0));
   }
@@ -40,6 +48,26 @@ export class VectorN {
 
   divide(that) {
     return new this.constructor(...this.data.map((value, i) => value / that.get(i)));
+  }
+
+  multiply(that) {
+    return new this.constructor(...this.data.map((value, i) => value * that.get(i)));
+  }
+
+  scalarSubtract(x) {
+    return new this.constructor(...this.data.map(value => value - x));
+  }
+
+  scalarAdd(x) {
+    return new this.constructor(...this.data.map(value => value + x));
+  }
+
+  scalarMultiply(x) {
+    return new this.constructor(...this.data.map(value => value * x));
+  }
+
+  scalarDivide(x) {
+    return new this.constructor(...this.data.map(value => value / x));
   }
 
   diagonalDistance(that) {
@@ -109,6 +137,22 @@ export class VectorN {
 
   abs() {
     return new this.constructor(...this.data.map(value => Math.abs(value)));
+  }
+
+  rightShift(n) {
+    return new this.constructor(...this.data.map(value => value >> n));
+  }
+
+  floor() {
+    return new this.constructor(...this.data.map(value => Math.floor(value)));
+  }
+
+  ceil() {
+    return new this.constructor(...this.data.map(value => Math.ceil(value)));
+  }
+
+  clamp(lo, hi) {
+    return new this.constructor(...this.data.map(value => (value < lo) ? lo : (value > hi ? hi : value)));
   }
 
   dot(that) {

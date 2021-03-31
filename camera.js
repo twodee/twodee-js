@@ -2,16 +2,20 @@ import {Vector3} from './vector.js';
 import {Matrix4} from './matrix.js';
 
 export class Camera {
-  constructor(from, to, up) {
-    this.lookAt(from, to, up);
+  constructor(from, to, worldUp) {
+    this.worldUp = worldUp;
+    this.from = from;
+    this.forward = to.subtract(from).normalize();
   }
 
-  lookAt(from, to, up) {
-    this.from = from;
-    this.to = to;
+  static lookAt(from, to, worldUp) {
+    const camera = new Camera(from, to, worldUp);
+    camera.orient();
+    return camera;
+  }
 
-    this.forward = to.subtract(from).normalize();
-    this.right = this.forward.cross(up).normalize();
+  orient() {
+    this.right = this.forward.cross(this.worldUp).normalize();
     this.up = this.right.cross(this.forward);
 
     const rotater = new Matrix4();
@@ -39,42 +43,93 @@ export class Camera {
 
   pitch(degrees) {
     const rotater = Matrix4.rotate(this.right, degrees);
-    const newTo = this.from.add(rotater.multiplyVector(this.to.subtract(this.from).toVector4(0)).toVector3());
-    const newUp = rotater.multiplyVector(this.up.toVector4(0)).toVector3();
-    this.lookAt(this.from, newTo, newUp);
+    this.forward = rotater.multiplyVector(this.forward.toVector4(0)).toVector3();
+    this.orient();
   }
 
   yaw(degrees) {
-    const rotater = Matrix4.rotate(this.up, degrees);
-    const newTo = this.from.add(rotater.multiplyVector(this.to.subtract(this.from).toVector4(0)).toVector3());
-    const newUp = rotater.multiplyVector(this.up.toVector4(0)).toVector3();
-    this.lookAt(this.from, newTo, this.up);
+    const rotater = Matrix4.rotate(this.worldUp, degrees);
+    this.forward = rotater.multiplyVector(this.forward.toVector4(0)).toVector3();
+    this.orient();
   }
 
   advance(delta) {
     const offset = this.forward.scalarMultiply(delta);
-    this.lookAt(this.from.add(offset), this.to.add(offset), this.up);
+    this.from = this.from.add(offset);
+    this.orient();
   }
 
   strafe(delta) {
     const offset = this.right.scalarMultiply(delta);
-    this.lookAt(this.from.add(offset), this.to.add(offset), this.up);
+    this.from = this.from.add(offset);
+    this.orient();
   }
 
   relocate(newFrom) {
-    this.lookAt(newFrom, newFrom.add(this.to.subtract(this.from)), this.up);
+    this.from = newFrom;
+    this.orient();
   }
 
   toPod() {
     return {
       type: 'Camera',
       from: this.from.toArray(),
-      to: this.to.toArray(),
-      up: this.up.toArray(),
+      forward: this.forward.toArray(),
+      worldUp: this.worldUp.toArray(),
     };
   }
 
   static fromPod(pod) {
-    return new Camera(new Vector3(...pod.from), new Vector3(...pod.to), new Vector3(...pod.up));
+    const camera = Object.create(this.prototype);
+    camera.from = new Vector3(...pod.from);
+    camera.forward = new Vector3(...pod.forward);
+    camera.worldUp = new Vector3(...pod.worldUp);
+    camera.orient();
+    return camera;
+  }
+}
+
+export class HeightmapCamera extends Camera {
+  constructor(from, to, worldUp, heightmap, eyeLevel) {
+    super(from, to, worldUp);
+    this.heightmap = heightmap;
+    this.eyeLevel = eyeLevel;
+  }
+
+  static lookAt(from, to, worldUp, heightmap, eyeLevel) {
+    const camera = new HeightmapCamera(from, to, worldUp, heightmap, eyeLevel);
+    camera.elevate();
+    camera.orient();
+    return camera;
+  }
+
+  elevate() {
+    if (this.from.x < 0) {
+      this.from.x = 0;
+    } else if (this.from.x >= this.heightmap.scaledWidth) {
+      this.from.x = this.heightmap.scaledWidth;
+    }
+
+    if (this.from.z < 0) {
+      this.from.z = 0;
+    } else if (this.from.z >= this.heightmap.scaledDepth) {
+      this.from.z = this.heightmap.scaledDepth;
+    }
+
+    this.from.y = this.heightmap.lerp(this.from.x, this.from.z) + this.eyeLevel;
+  }
+
+  advance(delta) {
+    const offset = this.forward.scalarMultiply(delta);
+    this.from = this.from.add(offset);
+    this.elevate();
+    this.orient();
+  }
+
+  strafe(delta) {
+    const offset = this.right.scalarMultiply(delta);
+    this.from = this.from.add(offset);
+    this.elevate();
+    this.orient();
   }
 }

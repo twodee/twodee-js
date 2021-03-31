@@ -1,4 +1,4 @@
-import {Vector3} from './vector';
+import {Vector2, Vector3} from './vector';
 import {Trimesh} from './trimesh';
 
 export class TrimeshIO {
@@ -17,7 +17,7 @@ export class TrimeshIO {
     
     const freePositions = [];
     const freeNormals = [];
-    const freeTextureCoordinates = [];
+    const freeTexcoords = [];
     const faces = [];
 
     for (let line of lines) {
@@ -27,7 +27,7 @@ export class TrimeshIO {
       } else if (fields[0] === 'vn') {
         freeNormals.push(new Vector3(parseFloat(fields[1]), parseFloat(fields[2]), parseFloat(fields[3])));
       } else if (fields[0] === 'vt') {
-        freeTextureCoordinates.push(new Vector2(parseFloat(fields[1]), parseFloat(fields[2])));
+        freeTexcoords.push(new Vector2(parseFloat(fields[1]), parseFloat(fields[2])));
       } else if (fields[0] === 'f') {
         for (let i = 1; i < fields.length - 2; ++i) {
           faces.push([fields[1], fields[i + 1], fields[i + 2]]);
@@ -39,7 +39,7 @@ export class TrimeshIO {
     let vertexIndex = 0;
     let positions = [];
     let normals = [];
-    let textureCoordinates = [];
+    let texcoords = [];
     for (let face of faces) {
       for (let [i, signature] of face.entries()) {
         if (!signatureToVertexIndex.hasOwnProperty(signature)) {
@@ -47,7 +47,7 @@ export class TrimeshIO {
 
           const pieces = signature.split(/\//).map(piece => parseInt(piece) - 1);
           positions.push(freePositions[pieces[0]]);
-          textureCoordinates.push(freeTextureCoordinates[pieces[1]]);
+          texcoords.push(freeTexcoords[pieces[1]]);
           normals.push(freeNormals[pieces[2]]);
         }
 
@@ -55,6 +55,6 @@ export class TrimeshIO {
       }
     }
 
-    return new Trimesh(positions, faces, normals, textureCoordinates);
+    return new Trimesh(positions, faces, normals, {texcoords});
   }
 }

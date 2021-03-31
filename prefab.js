@@ -87,6 +87,47 @@ export class Prefab {
     return new Trimesh(positions, faces, normals);
   }
 
+  static cube8(size = 1, origin = new Vector3(0, 0, 0)) {
+    const positions = [
+      new Vector3(-0.5, -0.5,  0.5),
+      new Vector3( 0.5, -0.5,  0.5),
+      new Vector3(-0.5,  0.5,  0.5),
+      new Vector3( 0.5,  0.5,  0.5),
+      new Vector3(-0.5, -0.5, -0.5),
+      new Vector3( 0.5, -0.5, -0.5),
+      new Vector3(-0.5,  0.5, -0.5),
+      new Vector3( 0.5,  0.5, -0.5),
+    ].map(p => p.scalarMultiply(size).add(origin));
+
+    const faces = [
+      // Front
+      [0, 1, 2],
+      [1, 3, 2],
+
+      // Back
+      [5, 4, 7],
+      [4, 6, 7],
+
+      // Right
+      [1, 5, 3],
+      [5, 7, 3],
+
+      // Left
+      [4, 0, 6],
+      [0, 2, 6],
+
+      // Top
+      [2, 3, 6],
+      [3, 7, 6],
+
+      // Bottom
+      [4, 5, 0],
+      [5, 1, 0],
+    ];
+
+    return new Trimesh(positions, faces);
+  }
+
   static sphere(radius, origin, sliceCount, stackCount) {
     const stackDelta = Math.PI / (stackCount + 2);
     const sliceDelta = 2.0 * Math.PI / sliceCount;
