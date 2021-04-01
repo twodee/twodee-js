@@ -31,22 +31,37 @@ export class Volume {
     this.data[i.z * this.dimensions.x * this.dimensions.y + i.y * this.dimensions.x + i.x] = value;
   }
 
-  lerp(i) {
+  lerpClamped(i) {
     const iFloor = i.floor();
     const iCeil = i.ceil().clamp(new Vector3(0, 0, 0), new Vector3(this.dimensions.scalarSubtract(1)));
     const iFraction = i.subtract(iFloor);
 
-    //
     const a = (1 - iFraction.z) * this.get3(iFloor.x, iFloor.y, iFloor.z) + iFraction.z * this.get3(iFloor.x, iFloor.y, iCeil.z);
     const b = (1 - iFraction.z) * this.get3(iCeil.x, iFloor.y, iFloor.z) + iFraction.z * this.get3(iCeil.x, iFloor.y, iCeil.z);
     const c = (1 - iFraction.z) * this.get3(iFloor.x, iCeil.y, iFloor.z) + iFraction.z * this.get3(iFloor.x, iCeil.y, iCeil.z);
     const d = (1 - iFraction.z) * this.get3(iCeil.x, iCeil.y, iFloor.z) + iFraction.z * this.get3(iCeil.x, iCeil.y, iCeil.z);
-
-    //
     const e = (1 - iFraction.y) * a + iFraction.y * c;
     const f = (1 - iFraction.y) * b + iFraction.y * d;
+    const g = (1 - iFraction.x) * e + iFraction.x * f;
 
-    //
+    return g;
+  }
+
+  lerpWrapped(i) {
+    const iFloor = i.floor();
+    const iCeil = new Vector3(
+      (iFloor.x + 1) % this.dimensions.x,
+      (iFloor.y + 1) % this.dimensions.y,
+      (iFloor.z + 1) % this.dimensions.z
+    );
+    const iFraction = i.subtract(iFloor);
+
+    const a = (1 - iFraction.z) * this.get3(iFloor.x, iFloor.y, iFloor.z) + iFraction.z * this.get3(iFloor.x, iFloor.y, iCeil.z);
+    const b = (1 - iFraction.z) * this.get3(iCeil.x, iFloor.y, iFloor.z) + iFraction.z * this.get3(iCeil.x, iFloor.y, iCeil.z);
+    const c = (1 - iFraction.z) * this.get3(iFloor.x, iCeil.y, iFloor.z) + iFraction.z * this.get3(iFloor.x, iCeil.y, iCeil.z);
+    const d = (1 - iFraction.z) * this.get3(iCeil.x, iCeil.y, iFloor.z) + iFraction.z * this.get3(iCeil.x, iCeil.y, iCeil.z);
+    const e = (1 - iFraction.y) * a + iFraction.y * c;
+    const f = (1 - iFraction.y) * b + iFraction.y * d;
     const g = (1 - iFraction.x) * e + iFraction.x * f;
 
     return g;
@@ -69,8 +84,7 @@ export class Volume {
     const jMax = this.dimensions.scalarSubtract(1);
     for (let i of newVolume) {
       const j = i.divide(iMax).multiply(jMax);
-      const value = this.lerp(j);
-      newVolume.set(i, this.lerp(j));
+      newVolume.set(i, this.lerpWrapped(j));
     }
     return newVolume;
   }
