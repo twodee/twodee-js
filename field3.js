@@ -1,6 +1,6 @@
 import {Vector3} from './vector';
 
-export class Volume {
+export class Field3 {
   constructor(dimensions, data) {
     this.dimensions = dimensions;
     this.size = this.dimensions.product;
@@ -79,21 +79,21 @@ export class Volume {
   }
 
   resample(newDimensions) {
-    const newVolume = Volume.allocate(newDimensions);
-    const iMax = newVolume.dimensions.scalarSubtract(1);
-    const jMax = this.dimensions.scalarSubtract(1);
-    for (let i of newVolume) {
+    const newField = Field3.allocate(newDimensions);
+    const iMax = newField.dimensions;
+    const jMax = this.dimensions;
+    for (let i of newField) {
       const j = i.divide(iMax).multiply(jMax);
-      newVolume.set(i, this.lerpWrapped(j));
+      newField.set(i, this.lerpWrapped(j));
     }
-    return newVolume;
+    return newField;
   }
 
   static valueNoise(dimensions, octaveCount) {
-    const volume = Volume.allocate(dimensions);
+    const volume = Field3.allocate(dimensions);
     for (let octaveIndex = 0; octaveIndex < octaveCount; octaveIndex += 1) {
       const octaveDimensions = dimensions.rightShift(octaveIndex);
-      let octave = Volume.whiteNoise(octaveDimensions);
+      let octave = Field3.whiteNoise(octaveDimensions);
       if (octaveIndex > 0) {
         octave = octave.resample(dimensions);
       }
@@ -106,7 +106,7 @@ export class Volume {
   }
 
   toUnsignedByte() {
-    const volume = new Volume(this.dimensions, null);
+    const volume = new Field3(this.dimensions, null);
     volume.data = new Uint8Array(volume.size);
     for (let i = 0; i < this.size; ++i) {
       volume.data[i] = Math.floor(this.data[i] * 255);
@@ -115,7 +115,7 @@ export class Volume {
   }
 
   static allocate(dimensions) {
-    const volume = new Volume(dimensions, null);
+    const volume = new Field3(dimensions, null);
     volume.data = new Float32Array(volume.size);
     return volume;
   }
