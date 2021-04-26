@@ -225,6 +225,12 @@ export class Trimesh {
     return this.faces.length;
   }
 
+  subdivide() {
+    // calculate faceMeans
+    // create edge lut: edge -> {v0, v1, f0, f1}
+    //
+  }
+
   static triangulate(positions, fixWinding = false) {
     // Assumes polyline traces planar polygon. Assumes last position is not
     // coincident with the first.

@@ -26,6 +26,10 @@ export class VectorN {
     return Math.sqrt(this.data.reduce((accumulator, datum) => accumulator + datum * datum, 0));
   }
 
+  static zero() {
+    return new this.constructor(this.data.map(() => 0));
+  }
+
   normalize() {
     return this.scalarDivide(this.magnitude);
   }
@@ -54,12 +58,24 @@ export class VectorN {
     return new this.constructor(...this.data.map((value, i) => value * that.get(i)));
   }
 
+  mod(that) {
+    return new this.constructor(...this.data.map((value, i) => value % that.get(i)));
+  }
+
+  scalarMod(divisor) {
+    return new this.constructor(...this.data.map((value, i) => value % divisor));
+  }
+
   scalarSubtract(x) {
     return new this.constructor(...this.data.map(value => value - x));
   }
 
   scalarAdd(x) {
     return new this.constructor(...this.data.map(value => value + x));
+  }
+
+  scalarAnd(x) {
+    return new this.constructor(...this.data.map(value => value & x));
   }
 
   scalarMultiply(x) {
@@ -232,7 +248,7 @@ export class Vector2 extends VectorN {
 // --------------------------------------------------------------------------- 
 
 export class Vector3 extends VectorN {
-  constructor(x = 0, y = 0, z = 0) {
+  constructor(x = 0, y = x, z = x) {
     super(3, [x, y, z]);
   }
 
@@ -365,7 +381,7 @@ export class Vector4 extends VectorN {
   }
 
   scalarDivide(factor) {
-    return new Vector2(this.x / factor, this.y / factor, this.z / factor, this.w / factor);
+    return new Vector4(this.x / factor, this.y / factor, this.z / factor, this.w / factor);
   }
 
   round() {

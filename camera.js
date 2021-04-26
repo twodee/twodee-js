@@ -65,6 +65,12 @@ export class Camera {
     this.orient();
   }
 
+  rise(delta) {
+    const offset = this.worldUp.scalarMultiply(delta);
+    this.from = this.from.add(offset);
+    this.orient();
+  }
+
   relocate(newFrom) {
     this.from = newFrom;
     this.orient();

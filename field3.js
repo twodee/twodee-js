@@ -1,6 +1,55 @@
 import {Vector3} from './vector';
+import {Noise} from './noise';
 
 export class Field3 {
+  static allocate(dimensions) {
+    const volume = new Field3(dimensions, null);
+    volume.data = new Float32Array(volume.size);
+    return volume;
+  }
+
+  static whiteNoise(dimensions) {
+    const volume = this.allocate(dimensions);
+    for (let i = 0; i < volume.size; i += 1) {
+      volume.data[i] = Math.random();
+    }
+    return volume;
+  }
+
+  static valueNoise(dimensions, layerCount) {
+    const volume = Field3.allocate(dimensions);
+    for (let layerIndex = 0; layerIndex < layerCount; layerIndex += 1) {
+      const layerDimensions = dimensions.rightShift(layerIndex);
+      let layer = Field3.whiteNoise(layerDimensions);
+      if (layerIndex > 0) {
+        layer = layer.scale(dimensions);
+      }
+      const weight = (1 << layerIndex) / ((1 << layerCount) - 1);
+      for (let i of volume) {
+        volume.set(i, volume.get(i) + layer.get(i) * weight);
+      }
+    }
+    return volume;
+  }
+
+  static perlinNoise(dimensions, scale) {
+    const field = this.allocate(dimensions, 1);
+    for (let p of field) {
+      const value = Noise.perlinNoise(new Vector3(p.x * scale.x, p.y * scale.y, 0.5));
+      field.set(p, value);
+    }
+    return field;
+  }
+
+  static fractalPerlinNoise(dimensions, scale, layerCount) {
+    const field = this.allocate(dimensions, 1);
+    for (let p of field) {
+      const value = Noise.fractalPerlinNoise(p.multiply(scale), layerCount);
+      field.set(p, value * 0.5 + 0.5);
+    }
+    return field;
+  }
+
   constructor(dimensions, data) {
     this.dimensions = dimensions;
     this.size = this.dimensions.product;
@@ -78,7 +127,7 @@ export class Field3 {
     }
   }
 
-  resample(newDimensions) {
+  scale(newDimensions) {
     const newField = Field3.allocate(newDimensions);
     const iMax = newField.dimensions;
     const jMax = this.dimensions;
@@ -89,42 +138,11 @@ export class Field3 {
     return newField;
   }
 
-  static valueNoise(dimensions, octaveCount) {
-    const volume = Field3.allocate(dimensions);
-    for (let octaveIndex = 0; octaveIndex < octaveCount; octaveIndex += 1) {
-      const octaveDimensions = dimensions.rightShift(octaveIndex);
-      let octave = Field3.whiteNoise(octaveDimensions);
-      if (octaveIndex > 0) {
-        octave = octave.resample(dimensions);
-      }
-      const weight = (1 << octaveIndex) / ((2 << (octaveCount - 1)) - 1);
-      for (let i of volume) {
-        volume.set(i, volume.get(i) + octave.get(i) * weight);
-      }
-    }
-    return volume;
-  }
-
-  toUnsignedByte() {
-    const volume = new Field3(this.dimensions, null);
-    volume.data = new Uint8Array(volume.size);
+  toUint8Array() {
+    const bytes = new Uint8Array(this.size);
     for (let i = 0; i < this.size; ++i) {
-      volume.data[i] = Math.floor(this.data[i] * 255);
+      bytes[i] = Math.floor(this.data[i] * 255);
     }
-    return volume;
-  }
-
-  static allocate(dimensions) {
-    const volume = new Field3(dimensions, null);
-    volume.data = new Float32Array(volume.size);
-    return volume;
-  }
-
-  static whiteNoise(dimensions) {
-    const volume = this.allocate(dimensions);
-    for (let i = 0; i < volume.size; i += 1) {
-      volume.data[i] = Math.random();
-    }
-    return volume;
+    return bytes;
   }
 }

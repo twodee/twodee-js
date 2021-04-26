@@ -90,8 +90,18 @@ export class ShaderProgram {
     gl.uniform2f(this.uniforms[name], a, b);
   }
 
+  setUniform2fv(name, v) {
+    this.assertUniform(name);
+    gl.uniform2f(this.uniforms[name], v.x, v.y);
+  }
+
   setUniform3f(name, a, b, c) {
     this.assertUniform(name);
     gl.uniform3f(this.uniforms[name], a, b, c);
+  }
+
+  setUniform3fv(name, v) {
+    this.assertUniform(name);
+    gl.uniform3f(this.uniforms[name], v.x, v.y, v.z);
   }
 }

@@ -5,63 +5,59 @@ import {MathUtilities} from './math-utilities.js';
 export class Trackball {
   constructor() {
     this.reset();
-    this.mouseAt = [0, 0];
-    this.mouseDelta = [0, 0];
   }
 
   reset() {
-    this.rotation = new Matrix4();
-    this.lastRotation = new Matrix4();
-    this.preDragRotation = new Matrix4();
-  }
-
-  repeat() {
-    this.rotation = this.lastRotation.multiplyMatrix(this.rotation);
-  }
-
-  start(x, y) {
-    this.mouseAt[0] = x;
-    this.mouseAt[1] = y;
-    this.mouseDelta[0] = 0;
-    this.mouseDelta[1] = 0;
-    this.preDragRotation = this.rotation;
-  }
-
-  drag(x, y, factor = 1) {
-    this.mouseDelta[0] = x - this.mouseAt[0];
-    this.mouseDelta[1] = y - this.mouseAt[1];
-
-    if (this.mouseAt[0] != x || this.mouseAt[1] != y) {
-      let minimumSpan = new Vector2(this.width, this.height).magnitude * 0.5;
-
-      let previous = this.vectorToMouse(minimumSpan, this.mouseAt[0], this.mouseAt[1]);
-      this.mouseAt[0] = x;
-      this.mouseAt[1] = y;
-      let current = this.vectorToMouse(minimumSpan, this.mouseAt[0], this.mouseAt[1]);
-
-      let dot = MathUtilities.clamp(-1, 1, previous.dot(current));
-      let degrees = Math.acos(dot) * 180 / Math.PI * factor;
-      let axis = current.cross(previous).normalize();
-
-      this.lastRotation = Matrix4.rotate(axis, degrees);
-      this.rotation = this.lastRotation.multiplyMatrix(this.rotation);
-    }
-  }
-
-  vectorToMouse(span, x, y) {
-    let vector = new Vector3((x - this.width * 0.5) / span, (y - this.height * 0.5) / span, 0);
-    vector.z = 1.0 - vector.x * vector.x - vector.y * vector.y;
-    if (vector.z < 0) {
-      vector.z = 0;
-      vector = vector.normalize();
-    } else {
-      vector.z = -Math.sqrt(vector.z);
-    }
-    return vector;
+    this.mouseSphere0 = null;
+    this.previousRotation = Matrix4.identity();
+    this.rotation = this.previousRotation;
+    this.dimensions = new Vector2(0, 0);
+    this.axis = null;
   }
 
   setViewport(width, height) {
-    this.width = width;
-    this.height = height;
+    this.dimensions.x = width;
+    this.dimensions.y = height;
+  }
+
+  pixelsToSphere(mousePixels) {
+    const mouseNdc = mousePixels.divide(this.dimensions).scalarMultiply(2).subtract(new Vector2(1, 1));
+    const zSquared = 1 - mouseNdc.x * mouseNdc.x - mouseNdc.y * mouseNdc.y;
+    if (zSquared > 0) {
+      return new Vector3(mouseNdc.x, mouseNdc.y, Math.sqrt(zSquared));
+    } else {
+      return new Vector3(mouseNdc.x, mouseNdc.y, 0).normalize();
+    }
+  }
+
+  start(mousePixels) {
+    this.mouseSphere0 = this.pixelsToSphere(mousePixels);
+  }
+
+  drag(mousePixels, factor) {
+    const mouseSphere = this.pixelsToSphere(mousePixels);
+    const dot = this.mouseSphere0.dot(mouseSphere);
+    if (Math.abs(dot) < 0.9999) {
+      const radians = Math.acos(dot) * factor;
+      this.axis = this.mouseSphere0.cross(mouseSphere).normalize();
+      const currentRotation = Matrix4.rotate(this.axis, radians * 180 / Math.PI);
+      this.rotation = currentRotation.multiplyMatrix(this.previousRotation);
+    }
+  }
+
+  end(mousePixels) {
+    this.previousRotation = this.rotation;
+    this.mouseSphere0 = null;
+  }
+
+  cancel(mousePixels) {
+    this.rotation = this.previousRotation;
+    this.mouseSphere0 = null;
+  }
+
+  truck(degrees) {
+    const currentRotation = Matrix4.rotate(this.axis, degrees);
+    this.previousRotation = currentRotation.multiplyMatrix(this.previousRotation);
+    this.rotation = this.previousRotation;
   }
 }

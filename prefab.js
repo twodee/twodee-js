@@ -4,7 +4,6 @@ import {Vector3} from './vector.js';
 export class Prefab {
   static cube(size = 1, origin = new Vector3(0, 0, 0)) {
     const positions = [
-
       // Front
       new Vector3(-0.5, -0.5,  0.5),
       new Vector3( 0.5, -0.5,  0.5),
@@ -72,8 +71,8 @@ export class Prefab {
     const faces = [
       [0, 1, 3],
       [0, 3, 2],
-      [5, 4, 6],
-      [5, 6, 7],
+      [4, 5, 7],
+      [4, 7, 6],
       [8, 9, 11],
       [8, 11, 10],
       [12, 13, 15],
@@ -219,6 +218,52 @@ export class Prefab {
       [0, 1, 3],
       [0, 3, 2],
     ];
+
+    return new Trimesh(positions, faces, normals);
+  }
+
+  static torus(innerRadius, outerRadius, nlatitudes, nlongitudes) {
+    const radius = outerRadius - innerRadius;
+    const centerX = (innerRadius + outerRadius) * 0.5;
+
+    const positions = [];
+    const normals = [];
+    const faces = [];
+    for (let ilongitude = 0; ilongitude < nlongitudes; ++ilongitude) {
+      let longitude = ilongitude / nlongitudes * 2 * Math.PI; 
+      const iNextLongitude = (ilongitude + 1) % nlongitudes;
+      for (let ilatitude = 0; ilatitude < nlatitudes; ++ilatitude) {
+        let latitude = ilatitude / nlatitudes * 2 * Math.PI;
+        const iNextLatitude = (ilatitude + 1) % nlatitudes;
+
+        const unrotatedX = radius * Math.cos(latitude) + centerX;
+        const unrotatedY = radius * Math.sin(latitude);
+        const position = new Vector3(
+          unrotatedX * Math.cos(longitude),
+          unrotatedY,
+          unrotatedX * Math.sin(longitude),
+        );
+        positions.push(position);
+
+        const normal = new Vector3(
+          Math.cos(latitude) * Math.cos(longitude),
+          Math.sin(latitude),
+          Math.cos(latitude) * Math.sin(longitude),
+        );
+        normals.push(normal);
+
+        faces.push([
+          ilongitude * nlatitudes + ilatitude,
+          ilongitude * nlatitudes + iNextLatitude,
+          iNextLongitude * nlatitudes + ilatitude,
+        ]);
+        faces.push([
+          ilongitude * nlatitudes + iNextLatitude,
+          iNextLongitude * nlatitudes + iNextLatitude,
+          iNextLongitude * nlatitudes + ilatitude,
+        ]);
+      }
+    }
 
     return new Trimesh(positions, faces, normals);
   }
