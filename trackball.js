@@ -18,10 +18,14 @@ export class Trackball {
   setViewport(width, height) {
     this.dimensions.x = width;
     this.dimensions.y = height;
+    console.log("this.dimensions.toString():", this.dimensions.toString());
   }
 
   pixelsToSphere(mousePixels) {
+    console.log("mousePixels:", mousePixels.toString());
+    console.log("this.dimensions:", this.dimensions);
     const mouseNdc = mousePixels.divide(this.dimensions).scalarMultiply(2).subtract(new Vector2(1, 1));
+    console.log("mouseNdc.toString():", mouseNdc.toString());
     const zSquared = 1 - mouseNdc.x * mouseNdc.x - mouseNdc.y * mouseNdc.y;
     if (zSquared > 0) {
       return new Vector3(mouseNdc.x, mouseNdc.y, Math.sqrt(zSquared));
@@ -32,11 +36,15 @@ export class Trackball {
 
   start(mousePixels) {
     this.mouseSphere0 = this.pixelsToSphere(mousePixels);
+    console.log("this.mouseSphere0:", this.mouseSphere0.toString());
   }
 
   drag(mousePixels, factor) {
     const mouseSphere = this.pixelsToSphere(mousePixels);
+    console.log("mouseSphere:", mouseSphere.toString());
+    console.log("this.mouseSphere0.toString():", this.mouseSphere0.toString());
     const dot = this.mouseSphere0.dot(mouseSphere);
+    console.log("dot:", dot);
     if (Math.abs(dot) < 0.9999) {
       const radians = Math.acos(dot) * factor;
       this.axis = this.mouseSphere0.cross(mouseSphere).normalize();

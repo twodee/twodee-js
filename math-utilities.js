@@ -22,4 +22,12 @@ export class MathUtilities {
   static isPowerOfTwo(x) {
     return x & (x - 1) === 0;
   }
+
+  static order(a, b) {
+    if (a <= b) {
+      return [a, b];
+    } else {
+      return [b, a];
+    }
+  }
 }

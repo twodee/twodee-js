@@ -1,4 +1,5 @@
 import {Trimesh} from './trimesh.js';
+import {Quadmesh} from './quadmesh.js';
 import {Vector3} from './vector.js';
 
 export class Prefab {
@@ -124,7 +125,19 @@ export class Prefab {
       [5, 1, 0],
     ];
 
-    return new Trimesh(positions, faces);
+    const texcoords = [
+      new Vector3(0, 0, 0),
+      new Vector3(1, 0, 0),
+      new Vector3(0, 1, 0),
+      new Vector3(1, 1, 0),
+
+      new Vector3(0, 0, 1),
+      new Vector3(1, 0, 1),
+      new Vector3(0, 1, 1),
+      new Vector3(1, 1, 1),
+    ];
+
+    return new Trimesh(positions, faces, null, {texcoords});
   }
 
   static sphere(radius, origin, sliceCount, stackCount) {
@@ -266,5 +279,52 @@ export class Prefab {
     }
 
     return new Trimesh(positions, faces, normals);
+  }
+
+  static quadCube8(size = 1, origin = new Vector3(0, 0, 0)) {
+    const positions = [
+      new Vector3(-0.5, -0.5,  0.5),
+      new Vector3( 0.5, -0.5,  0.5),
+      new Vector3(-0.5,  0.5,  0.5),
+      new Vector3( 0.5,  0.5,  0.5),
+      new Vector3(-0.5, -0.5, -0.5),
+      new Vector3( 0.5, -0.5, -0.5),
+      new Vector3(-0.5,  0.5, -0.5),
+      new Vector3( 0.5,  0.5, -0.5),
+    ].map(p => p.scalarMultiply(size).add(origin));
+
+    const faces = [
+      // Front
+      [0, 1, 3, 2],
+
+      // Back
+      [5, 4, 6, 7],
+
+      // Right
+      [1, 5, 7, 3],
+
+      // Left
+      [4, 0, 2, 6],
+
+      // Top
+      [2, 3, 7, 6],
+
+      // Bottom
+      [4, 5, 1, 0],
+    ];
+
+    const texcoords = [
+      new Vector3(0, 0, 0),
+      new Vector3(1, 0, 0),
+      new Vector3(0, 1, 0),
+      new Vector3(1, 1, 0),
+
+      new Vector3(0, 0, 1),
+      new Vector3(1, 0, 1),
+      new Vector3(0, 1, 1),
+      new Vector3(1, 1, 1),
+    ];
+
+    return new Quadmesh(positions, faces, null, {texcoords});
   }
 }

@@ -26,10 +26,6 @@ export class VectorN {
     return Math.sqrt(this.data.reduce((accumulator, datum) => accumulator + datum * datum, 0));
   }
 
-  static zero() {
-    return new this.constructor(this.data.map(() => 0));
-  }
-
   normalize() {
     return this.scalarDivide(this.magnitude);
   }
@@ -243,6 +239,10 @@ export class Vector2 extends VectorN {
   toVector4(z, w) {
     return new Vector4(this.x, this.y, z, w);
   }
+
+  static zero() {
+    return new Vector3(0, 0);
+  }
 }
 
 // --------------------------------------------------------------------------- 
@@ -327,6 +327,14 @@ export class Vector3 extends VectorN {
   static forward() {
     return new Vector3(0, 0, 1);
   }
+
+  static zero() {
+    return new Vector3(0, 0, 0);
+  }
+
+  static mean(vs) {
+    return vs.reduce((acc, v) => acc.add(v), Vector3.zero()).scalarDivide(vs.length);
+  }
 }
 
 // --------------------------------------------------------------------------- 
@@ -410,6 +418,10 @@ export class Vector4 extends VectorN {
 
   static forward() {
     return new Vector4(0, 0, 1, 0);
+  }
+
+  static zero() {
+    return new Vector3(0, 0, 0, 0);
   }
 }
 
