@@ -30,4 +30,8 @@ export class MathUtilities {
       return [b, a];
     }
   }
+
+  static lerp(from, to, t) {
+    return from * (1 - t) + to * t;
+  }
 }

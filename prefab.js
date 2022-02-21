@@ -1,6 +1,8 @@
 import {Trimesh} from './trimesh.js';
 import {Quadmesh} from './quadmesh.js';
 import {Vector3} from './vector.js';
+import {Matrix4} from './matrix.js';
+import {MathUtilities} from './math-utilities.js';
 
 export class Prefab {
   static cube(size = 1, origin = new Vector3(0, 0, 0)) {
@@ -326,5 +328,93 @@ export class Prefab {
     ];
 
     return new Quadmesh(positions, faces, null, {texcoords});
+  }
+
+  static cylinder(from, to, fromRadius, toRadius, nlatitudes, nlongitudes) {
+    const positions = [];
+    // const normals = [];
+    const faces = [];
+    const height = from.distance(to);
+
+    for (let ilatitude = 0; ilatitude < nlatitudes; ++ilatitude) {
+      const y = ilatitude / (nlatitudes - 1) * height;
+      const radius = MathUtilities.lerp(fromRadius, toRadius, ilatitude / (nlatitudes - 1));
+      for (let ilongitude = 0; ilongitude < nlongitudes; ++ilongitude) {
+        let radians = ilongitude / nlongitudes * 2 * Math.PI;
+        const x = radius * Math.cos(radians);
+        const z = radius * Math.sin(radians);
+        positions.push(new Vector3(x, y, z));
+      }
+    }
+
+    // From cap
+    for (let ilongitude = 0; ilongitude < nlongitudes; ++ilongitude) {
+      let radians = ilongitude / nlongitudes * 2 * Math.PI;
+      const x = fromRadius * Math.cos(radians);
+      const z = fromRadius * Math.sin(radians);
+      positions.push(new Vector3(x, 0, z));
+    }
+
+    // To cap
+    for (let ilongitude = 0; ilongitude < nlongitudes; ++ilongitude) {
+      let radians = ilongitude / nlongitudes * 2 * Math.PI;
+      const x = toRadius * Math.cos(radians);
+      const z = toRadius * Math.sin(radians);
+      positions.push(new Vector3(x, height, z));
+    }
+
+    positions.push(new Vector3(0, 0, 0));
+    positions.push(new Vector3(0, height, 0));
+
+    for (let ilatitude = 0; ilatitude < nlatitudes - 1; ++ilatitude) {
+      const iNextLatitude = ilatitude + 1;
+      for (let ilongitude = 0; ilongitude < nlongitudes; ++ilongitude) {
+        const iNextLongitude = (ilongitude + 1) % nlongitudes;
+        
+        faces.push([
+          ilatitude * nlongitudes + ilongitude,
+          iNextLatitude * nlongitudes + ilongitude,
+          ilatitude * nlongitudes + iNextLongitude,
+        ]);
+
+        faces.push([
+          ilatitude * nlongitudes + iNextLongitude,
+          iNextLatitude * nlongitudes + ilongitude,
+          iNextLatitude * nlongitudes + iNextLongitude,
+        ]);
+      }
+    }
+
+    const fromCenterIndex = positions.length - 2;
+    const toCenterIndex = positions.length - 1;
+    let baseIndex = nlatitudes * nlongitudes;
+
+    for (let ilongitude = 0; ilongitude < nlongitudes; ++ilongitude) {
+      const iNextLongitude = (ilongitude + 1) % nlongitudes;
+      faces.push([
+        fromCenterIndex,
+        baseIndex + ilongitude,
+        baseIndex + iNextLongitude,
+      ]);
+      faces.push([
+        toCenterIndex,
+        baseIndex + nlongitudes + iNextLongitude,
+        baseIndex + nlongitudes + ilongitude,
+      ]);
+    }
+
+    const mesh = new Trimesh(positions, faces);
+
+    const direction = to.subtract(from).normalize();
+    if (direction.y < 1) {
+      const degrees = Math.acos(direction.y) * 180 / Math.PI;
+      const axis = Vector3.up().cross(direction).normalize();
+      const transformation = Matrix4.rotate(axis, degrees);
+      mesh.transform(transformation);
+    }
+
+    mesh.transform(Matrix4.translate(from.x, from.y, from.z));
+
+    return mesh;
   }
 }

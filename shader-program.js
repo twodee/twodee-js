@@ -24,6 +24,15 @@ export class ShaderProgram {
       let uniform = gl.getActiveUniform(this.program, i);
       let location = gl.getUniformLocation(this.program, uniform.name);
       this.uniforms[uniform.name] = location;
+
+      // If uniform is an array, find locations of other elements.
+      for (let elementIndex = 1; elementIndex < uniform.size; ++elementIndex) {
+        const elementName = uniform.name.replace(/\[0\]$/, `[${elementIndex}]`);
+        location = gl.getUniformLocation(this.program, elementName);
+        if (location) {
+          this.uniforms[elementName] = location;
+        }
+      }
     }
 
     this.unbind();
@@ -92,7 +101,7 @@ export class ShaderProgram {
 
   setUniform2fv(name, v) {
     this.assertUniform(name);
-    gl.uniform2f(this.uniforms[name], v.x, v.y);
+    gl.uniform2fv(this.uniforms[name], v.toArray());
   }
 
   setUniform3f(name, a, b, c) {
@@ -102,6 +111,6 @@ export class ShaderProgram {
 
   setUniform3fv(name, v) {
     this.assertUniform(name);
-    gl.uniform3f(this.uniforms[name], v.x, v.y, v.z);
+    gl.uniform3fv(this.uniforms[name], v.toArray());
   }
 }

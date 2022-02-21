@@ -10,7 +10,15 @@ export class VectorN {
     if (i >= 0 && i < this.n) {
       return this.data[i];
     } else {
-      return 0;
+      throw Error(`Bad index: ${i}`);
+    }
+  }
+
+  set(i, value) {
+    if (i >= 0 && i < this.n) {
+      this.data[i] = value;
+    } else {
+      throw Error(`Bad index: ${i}`);
     }
   }
 
@@ -28,6 +36,10 @@ export class VectorN {
 
   normalize() {
     return this.scalarDivide(this.magnitude);
+  }
+
+  fit(length) {
+    return this.normalize().scalarMultiply(length);
   }
 
   flipAround(that) {

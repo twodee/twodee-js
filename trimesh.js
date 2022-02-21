@@ -175,7 +175,7 @@ export class Trimesh {
     }
   }
 
-  getFlatPositions() {
+  flatPositions() {
     const flat = [];
     for (let position of this.positions) {
       flat.push(position.x);
@@ -186,7 +186,7 @@ export class Trimesh {
     return flat;
   }
 
-  getFlatColors() {
+  flatColors() {
     const flat = [];
     for (let color of this.colors) {
       flat.push(color.x, color.y, color.z, 1);
@@ -194,7 +194,7 @@ export class Trimesh {
     return flat;
   }
 
-  getFlatNormals() {
+  flatNormals() {
     const flat = [];
     for (let normal of this.normals) {
       flat.push(normal.x);
@@ -205,7 +205,7 @@ export class Trimesh {
     return flat;
   }
 
-  getFlatAttribute(attribute) {
+  flatAttribute(attribute) {
     const flat = [];
     for (let value of this.extraVertexAttributes[attribute]) {
       flat.push(...value.data);
@@ -213,7 +213,7 @@ export class Trimesh {
     return flat;
   }
 
-  getFlatFaces() {
+  flatFaces() {
     return this.faces.flat();
   }
 
@@ -279,7 +279,7 @@ export class Trimesh {
         }
 
         // See if any other vertex lies inside the triangle formed by ijk.
-        const containsVertex = false;
+        let containsVertex = false;
         for (let ci = 0; !containsVertex && ci < remaining.length; ++ci) {
           if (ci !== i && ci !== j && ci !== k) {
             const triangle = new Triangle(remaining[i].position2, remaining[j].position2, remaining[k].position2);
