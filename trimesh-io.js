@@ -29,8 +29,8 @@ export class TrimeshIO {
       } else if (fields[0] === 'vt') {
         freeTexcoords.push(new Vector2(parseFloat(fields[1]), parseFloat(fields[2])));
       } else if (fields[0] === 'f') {
-        for (let i = 1; i < fields.length - 2; ++i) {
-          faces.push([fields[1], fields[i + 1], fields[i + 2]]);
+        for (let i = 2; i <= fields.length - 2; ++i) {
+          faces.push([fields[1], fields[i], fields[i + 1]]);
         }
       }
     }

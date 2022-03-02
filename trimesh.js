@@ -16,6 +16,19 @@ export class Trimesh {
     this.calculateBounds();
   }
 
+  toObject() {
+    const object = {
+      positions: this.positions.flatMap(p => [p.x, p.y, p.z]),
+      indices: this.faces.flat(),
+    };
+
+    if (this.normals) {
+      object.normals = this.normals.flatMap(n => [n.x, n.y, n.z]);
+    }
+
+    return object;
+  }
+
   setColors(colors) {
     if (colors.length !== this.vertexCount) {
       throw new Error('number of colors doesn\'t match number of vertices');
@@ -225,12 +238,6 @@ export class Trimesh {
     return this.faces.length;
   }
 
-  subdivide() {
-    // calculate faceMeans
-    // create edge lut: edge -> {v0, v1, f0, f1}
-    //
-  }
-
   static triangulate(positions, fixWinding = false) {
     // Assumes polyline traces planar polygon. Assumes last position is not
     // coincident with the first.
@@ -308,6 +315,29 @@ export class Trimesh {
     }
 
     return mesh;
+  }
+
+  static join(a, b) {
+    const positions = [...a.positions, ...b.positions];
+    let normals = null;
+
+    if (a.normals && b.normals) {
+      normals = [...a.normals, ...b.normals];
+    }
+
+    const faces = [...a.faces];
+    for (let face of b.faces) {
+      faces.push([
+        face[0] + a.vertexCount,
+        face[1] + a.vertexCount,
+        face[2] + a.vertexCount,
+      ]);
+    }
+
+    // TODO: colors
+    // extraVertexAttributes
+
+    return new Trimesh(positions, faces, normals);
   }
 
   static mergeToObj(meshes) {

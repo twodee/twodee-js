@@ -37,7 +37,7 @@ export class Trackball {
   drag(mousePixels, factor) {
     const mouseSphere = this.pixelsToSphere(mousePixels);
     const dot = this.mouseSphere0.dot(mouseSphere);
-    if (Math.abs(dot) < 0.9999) {
+    if (Math.abs(dot) < 1) {
       const radians = Math.acos(dot) * factor;
       this.axis = this.mouseSphere0.cross(mouseSphere).normalize();
       const currentMatrix = Matrix4.rotate(this.axis, radians * 180 / Math.PI);

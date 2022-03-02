@@ -417,4 +417,124 @@ export class Prefab {
 
     return mesh;
   }
+
+  static arrow(from, to, shaftRadius, earRadius, tipLength, nlatitudes, nlongitudes) {
+    const positions = [];
+    const faces = [];
+    const height = from.distance(to);
+    const shaftLength = height - tipLength;
+
+    // Shaft
+    for (let ilatitude = 0; ilatitude < nlatitudes; ++ilatitude) {
+      const y = ilatitude / (nlatitudes - 1) * shaftLength;
+      for (let ilongitude = 0; ilongitude < nlongitudes; ++ilongitude) {
+        let radians = ilongitude / nlongitudes * 2 * Math.PI;
+        const x = shaftRadius * Math.cos(radians);
+        const z = shaftRadius * Math.sin(radians);
+        positions.push(new Vector3(x, y, z));
+      }
+    }
+
+    for (let ilatitude = 0; ilatitude < nlatitudes - 1; ++ilatitude) {
+      const iNextLatitude = ilatitude + 1;
+      for (let ilongitude = 0; ilongitude < nlongitudes; ++ilongitude) {
+        const iNextLongitude = (ilongitude + 1) % nlongitudes;
+        
+        faces.push([
+          ilatitude * nlongitudes + ilongitude,
+          iNextLatitude * nlongitudes + ilongitude,
+          ilatitude * nlongitudes + iNextLongitude,
+        ]);
+
+        faces.push([
+          ilatitude * nlongitudes + iNextLongitude,
+          iNextLatitude * nlongitudes + ilongitude,
+          iNextLatitude * nlongitudes + iNextLongitude,
+        ]);
+      }
+    }
+
+    // Lip
+    let baseIndex = positions.length;
+
+    for (let ilongitude = 0; ilongitude < nlongitudes; ++ilongitude) {
+      let radians = ilongitude / nlongitudes * 2 * Math.PI;
+
+      let x = shaftRadius * Math.cos(radians);
+      let z = shaftRadius * Math.sin(radians);
+      positions.push(new Vector3(x, shaftLength, z));
+
+      x = earRadius * Math.cos(radians);
+      z = earRadius * Math.sin(radians);
+      positions.push(new Vector3(x, shaftLength, z));
+
+      const iNextLongitude = (ilongitude + 1) % nlongitudes;
+      faces.push([
+        baseIndex + ilongitude * 2 + 0,
+        baseIndex + ilongitude * 2 + 1,
+        baseIndex + iNextLongitude * 2 + 1,
+      ]);
+      faces.push([
+        baseIndex + ilongitude * 2 + 0,
+        baseIndex + iNextLongitude * 2 + 1,
+        baseIndex + iNextLongitude * 2,
+      ]);
+    }
+
+    // Tip
+    baseIndex = positions.length;
+
+    for (let ilongitude = 0; ilongitude < nlongitudes; ++ilongitude) {
+      let radians = ilongitude / nlongitudes * 2 * Math.PI;
+
+      let x = earRadius * Math.cos(radians);
+      let z = earRadius * Math.sin(radians);
+      positions.push(new Vector3(x, shaftLength, z));
+      positions.push(new Vector3(0, height, 0));
+
+      const iNextLongitude = (ilongitude + 1) % nlongitudes;
+      faces.push([
+        baseIndex + ilongitude * 2 + 0,
+        baseIndex + iNextLongitude * 2 + 1,
+        baseIndex + iNextLongitude * 2 + 0,
+      ]);
+    }
+
+    baseIndex = positions.length;
+
+    // From cap
+    for (let ilongitude = 0; ilongitude < nlongitudes; ++ilongitude) {
+      let radians = ilongitude / nlongitudes * 2 * Math.PI;
+      const x = shaftRadius * Math.cos(radians);
+      const z = shaftRadius * Math.sin(radians);
+      positions.push(new Vector3(x, 0, z));
+    }
+
+    positions.push(new Vector3(0, 0, 0));
+
+    const fromCenterIndex = positions.length - 1;
+
+    for (let ilongitude = 0; ilongitude < nlongitudes; ++ilongitude) {
+      const iNextLongitude = (ilongitude + 1) % nlongitudes;
+      faces.push([
+        fromCenterIndex,
+        baseIndex + ilongitude,
+        baseIndex + iNextLongitude,
+      ]);
+    }
+
+    const mesh = new Trimesh(positions, faces);
+
+    const direction = to.subtract(from).normalize();
+    if (direction.y < 1) {
+      const degrees = Math.acos(direction.y) * 180 / Math.PI;
+      const axis = Vector3.up().cross(direction).normalize();
+      const transformation = Matrix4.rotate(axis, degrees);
+      mesh.transform(transformation);
+    }
+
+    mesh.transform(Matrix4.translate(from.x, from.y, from.z));
+
+    return mesh;
+  }
 }
