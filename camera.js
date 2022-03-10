@@ -6,6 +6,8 @@ export class Camera {
     this.worldUp = worldUp;
     this.from = from;
     this.forward = to.subtract(from).normalize();
+    this.maxPitch = 15;
+    this.currentPitch = 0;
   }
 
   static lookAt(from, to, worldUp) {
@@ -42,6 +44,12 @@ export class Camera {
   }
 
   pitch(degrees) {
+    if (this.currentPitch + degrees > this.maxPitch) {
+      degrees = this.maxPitch - this.currentPitch;
+    } else if (this.currentPitch + degrees < -this.maxPitch) {
+      degrees = -this.maxPitch - this.currentPitch;
+    }
+    this.currentPitch += degrees;
     const rotater = Matrix4.rotate(this.right, degrees);
     this.forward = rotater.multiplyVector(this.forward.toVector4(0)).toVector3();
     this.orient();

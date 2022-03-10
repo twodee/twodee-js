@@ -75,42 +75,42 @@ export class ShaderProgram {
 
   assertUniform(name) {
     if (!this.uniforms.hasOwnProperty(name)) {
-      console.error(`${name} isn't a valid uniform.`);
+      console.warn(`${name} isn't a valid uniform.`);
     }
   }
 
   setUniform1i(name, value) {
-    // this.assertUniform(name);
+    this.assertUniform(name);
     gl.uniform1i(this.uniforms[name], value);
   }
 
   setUniformMatrix4(name, matrix) {
-    // this.assertUniform(name);
+    this.assertUniform(name);
     gl.uniformMatrix4fv(this.uniforms[name], false, matrix.toBuffer());
   }
 
   setUniform1f(name, value) {
-    // this.assertUniform(name);
+    this.assertUniform(name);
     gl.uniform1f(this.uniforms[name], value);
   }
 
   setUniform2f(name, a, b) {
-    // this.assertUniform(name);
+    this.assertUniform(name);
     gl.uniform2f(this.uniforms[name], a, b);
   }
 
   setUniform2fv(name, v) {
-    // this.assertUniform(name);
+    this.assertUniform(name);
     gl.uniform2fv(this.uniforms[name], v.toArray());
   }
 
   setUniform3f(name, a, b, c) {
-    // this.assertUniform(name);
+    this.assertUniform(name);
     gl.uniform3f(this.uniforms[name], a, b, c);
   }
 
   setUniform3fv(name, v) {
-    // this.assertUniform(name);
+    this.assertUniform(name);
     gl.uniform3fv(this.uniforms[name], v.toArray());
   }
 }

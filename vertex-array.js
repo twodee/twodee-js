@@ -7,7 +7,7 @@ export class VertexArray {
     for (let attribute of attributes) {
       let location = program.getAttributeLocation(attribute.name);
       if (location < 0) {
-        console.log(`${attribute.name} is not used in the shader.`);
+        console.debug(`${attribute.name} is not used in the shader.`);
       } else {
         gl.bindBuffer(gl.ARRAY_BUFFER, attribute.buffer);
         gl.vertexAttribPointer(location, attribute.ncomponents, gl.FLOAT, false, 0, 0);

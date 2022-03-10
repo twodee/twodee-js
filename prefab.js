@@ -1,6 +1,6 @@
 import {Trimesh} from './trimesh.js';
 import {Quadmesh} from './quadmesh.js';
-import {Vector3} from './vector.js';
+import {Vector2, Vector3} from './vector.js';
 import {Matrix4} from './matrix.js';
 import {MathUtilities} from './math-utilities.js';
 
@@ -536,5 +536,21 @@ export class Prefab {
     mesh.transform(Matrix4.translate(from.x, from.y, from.z));
 
     return mesh;
+  }
+
+  static grid2(from, to, ticks) {
+    const positions = [];
+
+    for (let x = from.x; x <= to.x; x += ticks.x) {
+      positions.push(new Vector2(x, from.y));
+      positions.push(new Vector2(x, to.y));
+    }
+
+    for (let y = from.y; y <= to.y; y += ticks.y) {
+      positions.push(new Vector2(from.x, y));
+      positions.push(new Vector2(to.x, y));
+    }
+
+    return positions;
   }
 }
