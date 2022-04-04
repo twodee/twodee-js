@@ -16,6 +16,12 @@ export class Camera {
     return camera;
   }
 
+  lookAt(newFrom, newTo) {
+    this.from = newFrom;
+    this.forward = newTo.subtract(newFrom).normalize();
+    this.orient();
+  }
+
   orient() {
     this.right = this.forward.cross(this.worldUp).normalize();
     this.up = this.right.cross(this.forward);
@@ -103,7 +109,7 @@ export class Camera {
   }
 }
 
-export class HeightmapCamera extends Camera {
+export class TerrainCamera extends Camera {
   constructor(from, to, worldUp, heightmap, eyeLevel) {
     super(from, to, worldUp);
     this.heightmap = heightmap;
@@ -111,7 +117,7 @@ export class HeightmapCamera extends Camera {
   }
 
   static lookAt(from, to, worldUp, heightmap, eyeLevel) {
-    const camera = new HeightmapCamera(from, to, worldUp, heightmap, eyeLevel);
+    const camera = new TerrainCamera(from, to, worldUp, heightmap, eyeLevel);
     camera.elevate();
     camera.orient();
     return camera;

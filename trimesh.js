@@ -3,17 +3,26 @@ import {Polyline} from './polyline.js';
 import {Triangle} from './triangle.js';
 
 export class Trimesh {
-  constructor(positions, faces, normals, extraVertexAttributes) {
+  constructor(positions, faces, normals, extraVertexAttributes = {}) {
     this.positions = positions;
     this.faces = faces;
     this.normals = normals;
     this.extraVertexAttributes = extraVertexAttributes;
 
-    this.colors = undefined;
     this.bounds = undefined;
     this.centroid = undefined;
 
     this.calculateBounds();
+  }
+
+  setTexPositions(texPositions) {
+    this.extraVertexAttributes.texPositions = texPositions;
+  }
+
+  flipV() {
+    for (let uv of this.extraVertexAttributes.texPositions) {
+      uv.y = 1 - uv.y;
+    }
   }
 
   toObject() {
@@ -29,22 +38,15 @@ export class Trimesh {
     return object;
   }
 
-  setColors(colors) {
-    if (colors.length !== this.vertexCount) {
-      throw new Error('number of colors doesn\'t match number of vertices');
-    }
-    this.colors = colors;
-  }
-
   color(rgb) {
-    this.colors = new Array(this.vertexCount).fill(rgb);
+    this.extraVertexAttributes.colors = new Array(this.vertexCount).fill(rgb);
   }
 
   toPod() {
     return {
       type: 'Trimesh',
       positions: this.positions.map(position => position.toArray()),
-      colors: this.colors?.map(color => color.toArray()),
+      // colors: this.colors?.map(color => color.toArray()),
       faces: this.faces,
       normals: this.normals?.map(normal => normal.toArray()),
       textureCoordinates: this.textureCoordinates?.map(coordinate => coordinate.toArray()),
@@ -61,7 +63,7 @@ export class Trimesh {
       pod.positions.map(position => new Vector3(...position)), 
       pod.faces.map(face => [...face]), 
       pod.normals?.map(normal => new Vector3(...normal)), 
-      pod.textureCoordinates?.map(coordinate => new Vector2(...coordinate)), 
+      // pod.textureCoordinates?.map(coordinate => new Vector2(...coordinate)), 
     );
 
     if (pod.colors) {
@@ -85,6 +87,14 @@ export class Trimesh {
   transform(matrix) {
     for (let i = 0; i < this.positions.length; ++i) {
       this.positions[i] = matrix.multiplyVector(this.positions[i].toVector4(1)).toVector3();
+    }
+
+    // Transform normals
+    if (this.normals) {
+      // TODO use normal matrix
+      for (let i = 0; i < this.normals.length; ++i) {
+        this.normals[i] = matrix.multiplyVector(this.normals[i].toVector4(0)).toVector3();
+      }
     }
   }
 
@@ -119,9 +129,10 @@ export class Trimesh {
     this.positions = new Array(this.faceCount * 3);
     this.normals = new Array(this.faceCount * 3);
 
-    const oldColors = this.colors;
-    if (oldColors) {
-      this.colors = new Array(this.faceCount * 3);
+    const oldExtraVertexAttributes = this.extraVertexAttributes;
+    this.extraVertexAttributes = {};
+    for (let attribute of Object.keys(oldExtraVertexAttributes)) {
+      this.extraVertexAttributes[attribute] = new Array(this.faceCount * 3);
     }
 
     // Compute face normal. Accumulate to each connected vertex.
@@ -134,8 +145,8 @@ export class Trimesh {
         this.positions[vertexIndex] = oldPositions[face[i]].clone();
         this.normals[vertexIndex] = faceNormal;
 
-        if (oldColors) {
-          this.colors[vertexIndex] = oldColors[face[i]].clone();
+        for (let attribute of Object.keys(oldExtraVertexAttributes)) {
+          this.extraVertexAttributes[attribute][vertexIndex] = oldExtraVertexAttributes[attribute][face[i]].clone();
         }
 
         face[i] = vertexIndex;

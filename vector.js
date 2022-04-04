@@ -416,6 +416,10 @@ export class Vector4 extends VectorN {
     return this.x * that.x + this.y * that.y + this.z * that.z + this.w * that.w;
   }
 
+  toVector2() {
+    return new Vector2(this.data[0], this.data[1]);
+  }
+
   toVector3() {
     return new Vector3(this.data[0], this.data[1], this.data[2]);
   }

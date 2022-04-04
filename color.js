@@ -3,6 +3,14 @@ export class Color {
     this.values = [r, g, b];
   }
 
+  static rgb(r, g, b) {
+    return new Color(r, g, b);
+  }
+
+  static gray(intensity) {
+    return new Color(intensity, intensity, intensity);
+  }
+
   equals(that) {
     return this.values[0] == that.values[0] &&
            this.values[1] == that.values[1] &&

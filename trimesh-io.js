@@ -39,7 +39,7 @@ export class TrimeshIO {
     let vertexIndex = 0;
     let positions = [];
     let normals = [];
-    let texcoords = [];
+    let texPositions = [];
     for (let face of faces) {
       for (let [i, signature] of face.entries()) {
         if (!signatureToVertexIndex.hasOwnProperty(signature)) {
@@ -47,7 +47,7 @@ export class TrimeshIO {
 
           const pieces = signature.split(/\//).map(piece => parseInt(piece) - 1);
           positions.push(freePositions[pieces[0]]);
-          texcoords.push(freeTexcoords[pieces[1]]);
+          texPositions.push(freeTexcoords[pieces[1]]);
           normals.push(freeNormals[pieces[2]]);
         }
 
@@ -55,6 +55,6 @@ export class TrimeshIO {
       }
     }
 
-    return new Trimesh(positions, faces, normals, {texcoords});
+    return new Trimesh(positions, faces, normals, {texPositions});
   }
 }

@@ -1,7 +1,7 @@
 import {Trimesh} from './trimesh';
 import {Vector2, Vector3} from './vector';
 
-export class Heightmap {
+export class Terrain {
   constructor(width, depth, elevations, scales) {
     this.width = width;
     this.depth = depth;
@@ -42,11 +42,11 @@ export class Heightmap {
 
   toTrimesh() {
     const positions = [];
-    const texcoords = [];
+    const texPositions = [];
     for (let z = 0; z < this.depth; z += 1) {
       for (let x = 0; x < this.width; x += 1) {
         positions.push(new Vector3(x * this.scales[0], this.get(x, z) * this.scales[1], z * this.scales[2]));
-        texcoords.push(new Vector2(x / (this.width - 1), z / (this.depth - 1)));
+        texPositions.push(new Vector2(x / (this.width - 1), z / (this.depth - 1)));
       }
     }
 
@@ -60,7 +60,7 @@ export class Heightmap {
       }
     }
 
-    return new Trimesh(positions, faces, null, {texcoords});
+    return new Trimesh(positions, faces, null, {texPositions});
   }
 }
 
