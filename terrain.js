@@ -40,13 +40,13 @@ export class Terrain {
     return y * this.scales[1];
   }
 
-  toTrimesh() {
+  toTrimesh(texFactors = new Vector2(1, 1)) {
     const positions = [];
     const texPositions = [];
     for (let z = 0; z < this.depth; z += 1) {
       for (let x = 0; x < this.width; x += 1) {
         positions.push(new Vector3(x * this.scales[0], this.get(x, z) * this.scales[1], z * this.scales[2]));
-        texPositions.push(new Vector2(x / (this.width - 1), z / (this.depth - 1)));
+        texPositions.push(new Vector2(x / (this.width - 1) * texFactors.x, z / (this.depth - 1) * texFactors.y));
       }
     }
 

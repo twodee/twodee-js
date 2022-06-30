@@ -553,4 +553,45 @@ export class Prefab {
 
     return positions;
   }
+
+  static tetrahedron(s) {
+    const positions = [
+      new Vector3(-s, -s,  s), 
+      new Vector3( s, -s, -s), 
+      new Vector3( s,  s,  s),
+      new Vector3(-s, -s,  s), 
+      new Vector3( s, -s, -s), 
+      new Vector3(-s,  s, -s),
+      new Vector3( s,  s,  s),
+      new Vector3(-s,  s, -s),
+      new Vector3(-s, -s,  s),
+      new Vector3( s,  s,  s),
+      new Vector3(-s,  s, -s),
+      new Vector3( s, -s, -s),
+    ];
+
+    const colors = [
+      new Vector3(1, 0, 0),
+      new Vector3(1, 0, 0),
+      new Vector3(1, 0, 0),
+      new Vector3(0, 0, 1),
+      new Vector3(0, 0, 1),
+      new Vector3(0, 0, 1),
+      new Vector3(0, 1, 0),
+      new Vector3(0, 1, 0),
+      new Vector3(0, 1, 0),
+      new Vector3(1, 1, 0),
+      new Vector3(1, 1, 0),
+      new Vector3(1, 1, 0),
+    ];
+
+    const faces = [
+      [0, 1, 2],
+      [3, 5, 4],
+      [6, 7, 8],
+      [9, 11, 10],
+    ];
+
+    return new Trimesh(positions, faces, null, {colors});
+  }
 }
