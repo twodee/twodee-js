@@ -255,6 +255,10 @@ export class Vector2 extends VectorN {
   static zero() {
     return new Vector3(0, 0);
   }
+
+  static one() {
+    return new Vector3(1, 1);
+  }
 }
 
 // --------------------------------------------------------------------------- 

@@ -1,6 +1,7 @@
 import {Vector3} from './vector.js';
 import {Polyline} from './polyline.js';
 import {Triangle} from './triangle.js';
+import {VertexAttributes} from './vertex-attributes.js';
 
 export class Trimesh {
   constructor(positions, faces, normals, extraVertexAttributes = {}) {
@@ -212,7 +213,7 @@ export class Trimesh {
 
   flatColors() {
     const flat = [];
-    for (let color of this.colors) {
+    for (let color of this.extraVertexAttributes.colors) {
       flat.push(color.x, color.y, color.z, 1);
     }
     return flat;
@@ -326,6 +327,21 @@ export class Trimesh {
     }
 
     return mesh;
+  }
+
+  toVertexAttributes(options) {
+    const attributes = new VertexAttributes();
+    attributes.addAttribute('position', this.vertexCount, 4, this.flatPositions());
+    if (options.normals) {
+      attributes.addAttribute('normal', this.vertexCount, 4, this.flatNormals());
+    }
+    if (options.texPositions) {
+      attributes.addAttribute('texPosition', this.vertexCount, 4, this.flatAttribute('texPositions'));
+    }
+    if (options.indices) {
+      attributes.addIndices(this.flatFaces());
+    }
+    return attributes;
   }
 
   static join(a, b) {

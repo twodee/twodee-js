@@ -20,7 +20,7 @@ export class MathUtilities {
   }
 
   static isPowerOfTwo(x) {
-    return x & (x - 1) === 0;
+    return (x !== 0) && ((x & (x - 1)) === 0);
   }
 
   static order(a, b) {
