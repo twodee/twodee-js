@@ -2,6 +2,12 @@
   "type": "module",
   "name": "twodee-js",
   "version": "1.0.0",
+  "exports": {
+    "./vector": "src/vector.js",
+    "./vertex-array": "src/vertex-array.js",
+    "./vertex-attributes": "src/vertex-attributes.js",
+    "./shader-program": "src/shader-program.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
