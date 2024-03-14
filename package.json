@@ -6,7 +6,12 @@
     "./vector": "src/vector.js",
     "./vertex-array": "src/vertex-array.js",
     "./vertex-attributes": "src/vertex-attributes.js",
-    "./shader-program": "src/shader-program.js"
+    "./shader-program": "src/shader-program.js",
+    "./matrix": "src/matrix.js",
+    "./vector": "src/vector.js",
+    "./trackball": "src/trackball.js",
+    "./trimesh": "src/trimesh.js",
+    "./trimesh-io": "src/trimesh-io.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
